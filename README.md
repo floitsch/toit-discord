@@ -1,84 +1,37 @@
-# MyPackage
+# Discord
 
-A template repository for creating a Toit package.
+A minimal Discord API client for Toit.
 
-## Toit package
-Use `toit.pkg describe` or `toit pkg describe` (depending on which Toit
-variant you use) to see how https://pkg.toit.io will extract package
-information from your repo when you publish the package.
+## Token
+You need to create a bot account and get a token.
 
-Either add a `name: ...` entry to the package.yaml or change the title
-(first line) of this README to the package name.
+- Go to https://discord.com/developers.
+- Create a new application.
+- Go to the "Bot" tab.
+- Click "Add Bot".
+- Click "Yes, do it!".
+- Reset the token and copy it. Pass it as argument to the Discord client.
 
-Either add a `description: ...` entry to the package.yaml or ensure
-that the first paragraph of this README can be used as a description.
+If you want to read messages, also enable the privileged gateway intents on the same page.
+  Specifically, enable the "Message Content Intent".
 
-## Structure
-Code that should be used by other developers must live in the `src` folder.
+- Go to the "OAuth2" tab.
 
-Examples should live in `examples`. For bigger examples, or examples that
-use more packages, create a subfolder.
+## Adding a bot to a server
 
-Tests live in the `tests` folder.
+For authorization, there are two options:
+- create a custom URL, or
+- set the default authorization link. (Only works for public bots.)
 
-## Copyright
-Don't forget to update the copyright holder in the license files.
-There are (up to) three license files:
-- `LICENSE`: usually MIT
-- `examples/EXAMPLES_LICENSE`: usually BSD0
-- `tests/TESTS_LICENSE`: usually BSD0
+The custom URL is faster for testing, but the default authorization link is
+  more convenient for users.
 
-We recommend to use the following Copyright header in `src` files (with your
-copyright):
+In both cases, go to the "OAuth2" section.
 
-```
-// Copyright (C) 2022 Jane/John Doe
-// Use of this source code is governed by an MIT-style license that can be
-// found in the package's LICENSE file.
-```
+For the custom URL, go to the URL Generator. Click on "bot" (but no other) and
+then select the permissions you want. Give this URL to users who want to add the
+bot.
 
-Similarly, you can use the following header for tests and examples:
-```
-// Copyright (C) 2022 Jane/John Doe
-// Use of this source code is governed by a Zero-Clause BSD license that can
-// be found in the tests/TESTS_LICENSE file.
-```
-and
-```
-// Copyright (C) 2022 Jane/John Doe
-// Use of this source code is governed by a Zero-Clause BSD license that can
-// be found in the examples/EXAMPLES_LICENSE file.
-```
-
-## Local package
-Examples and tests can have different dependencies than the package. This is,
-why they have their own package.yaml/package.lock.
-
-Open the examples (resp. tests) folder with a separate instance of your IDE.
-For vscode you could just write `code examples`.
-
-Install this package as a local package.
-```
-cd examples
-toit.pkg install --local --name=YOUR_PACKAGE_NAME ..
-```
-
-This installs the package located at ".." (here the root of the repository) with
-your package name.
-
-Consequently examples and tests can import the package as if it was installed
-from the Internet. This way, tests and examples use the same syntax as
-users of the package.
-
-## Publish
-Make sure to run `toit.pkg describe` to verify that the data is correct.
-
-This repository comes with a `.github/workflows/publish.xml` file which automatically
-publishes the Toit package for every release. You can just draft a new release on
-Github.
-It is important that the release has a semver tag (like `v1.2.3`).
-
-Alternatively, a package can be published by hand:
-0. Ensure that everything looks good (`toit.pkg describe`).
-1. Add a semver tag (like `v1.0.0`).
-2. Go to https://pkg.toit.io/publish and submit your package.
+For the default authorization link, go to the "General" tab, and change the
+  Authorization Method to "In-app Authorization" in the "Default Authorization Link"
+  section. Choose "bot" and the permissions the bot should have.
