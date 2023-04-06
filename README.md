@@ -35,3 +35,6 @@ bot.
 For the default authorization link, go to the "General" tab, and change the
   Authorization Method to "In-app Authorization" in the "Default Authorization Link"
   section. Choose "bot" and the permissions the bot should have.
+
+## Features and bugs
+Please file feature requests and bugs at the [issue tracker](https://github.com/floitsch/toit-discord/issues).

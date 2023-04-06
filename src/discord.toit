@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Toitware ApS. All rights reserved.
+// Copyright (C) 2023 Florian Loitsch.
 // Use of this source code is governed by a MIT-style license that can be found
 // in the LICENSE file.
 
@@ -9,7 +9,12 @@ Discord API: https://discord.com/developers/docs/reference
 import certificate_roots
 import encoding.json
 import http
+import log
 import net
+
+import .model
+import .gateway_model
+export *
 
 /**
 A library to implement a Discord bot.
@@ -37,11 +42,31 @@ For the default authorization link, go to the "General" tab, and change the
   section. Choose "bot" and the permissions the bot should have.
 */
 
-BOT_VERSION ::= "0.1"
+INTENT_GUILDS ::= 1 << 0
+INTENT_GUILD_MEMBERS ::= 1 << 1
+INTENT_GUILD_MODERATION ::= 1 << 2
+INTENT_GUILD_EMOJIS_AND_STICKERS ::= 1 << 3
+INTENT_GUILD_INTEGRATIONS ::= 1 << 4
+INTENT_GUILD_WEBHOOKS ::= 1 << 5
+INTENT_GUILD_INVITES ::= 1 << 6
+INTENT_GUILD_VOICE_STATES ::= 1 << 7
+INTENT_GUILD_PRESENCES ::= 1 << 8
+INTENT_GUILD_MESSAGES ::= 1 << 9
+INTENT_GUILD_MESSAGE_REACTIONS ::= 1 << 10
+INTENT_GUILD_MESSAGE_TYPING ::= 1 << 11
+INTENT_DIRECT_MESSAGES ::= 1 << 12
+INTENT_DIRECT_MESSAGE_REACTIONS ::= 1 << 13
+INTENT_DIRECT_MESSAGE_TYPING ::= 1 << 14
+INTENT_GUILD_MESSAGE_CONTENT ::= 1 << 15
+INTENT_GUILD_SCHEDULED_EVENTS ::= 1 << 16
+INTENT_AUTO_MODERATION_CONFIGURATION ::= 1 << 20
+INTENT_AUTO_MODERATION_EXECUTION ::= 1 << 21
 
-API_HOST ::= "discord.com"
-API_VERSION ::= "10"
-API_PATH ::= "/api/v$API_VERSION"
+BOT_VERSION_ ::= "0.1"
+
+API_HOST_ ::= "discord.com"
+API_VERSION_ ::= "10"
+API_PATH_ ::= "/api/v$API_VERSION_"
 
 // https://discord.com/developers/docs/topics/gateway
 
@@ -49,26 +74,6 @@ API_PATH ::= "/api/v$API_VERSION"
 A gateway is a WebSocket connection to the Discord API.
 */
 class Gateway:
-  static INTENT_GUILDS ::= 1 << 0
-  static INTENT_GUILD_MEMBERS ::= 1 << 1
-  static INTENT_GUILD_MODERATION ::= 1 << 2
-  static INTENT_GUILD_EMOJIS_AND_STICKERS ::= 1 << 3
-  static INTENT_GUILD_INTEGRATIONS ::= 1 << 4
-  static INTENT_GUILD_WEBHOOKS ::= 1 << 5
-  static INTENT_GUILD_INVITES ::= 1 << 6
-  static INTENT_GUILD_VOICE_STATES ::= 1 << 7
-  static INTENT_GUILD_PRESENCES ::= 1 << 8
-  static INTENT_GUILD_MESSAGES ::= 1 << 9
-  static INTENT_GUILD_MESSAGE_REACTIONS ::= 1 << 10
-  static INTENT_GUILD_MESSAGE_TYPING ::= 1 << 11
-  static INTENT_DIRECT_MESSAGES ::= 1 << 12
-  static INTENT_DIRECT_MESSAGE_REACTIONS ::= 1 << 13
-  static INTENT_DIRECT_MESSAGE_TYPING ::= 1 << 14
-  static INTENT_GUILD_MESSAGE_CONTENT ::= 1 << 15
-  static INTENT_GUILD_SCHEDULED_EVENTS ::= 1 << 16
-  static INTENT_AUTO_MODERATION_CONFIGURATION ::= 1 << 20
-  static INTENT_AUTO_MODERATION_EXECUTION ::= 1 << 21
-
   /** An event was dispatched. Sent by server. */
   static OP_DISPATCH ::= 0
   /** Fired periodically by the client to keep the connection alive. */
@@ -92,82 +97,153 @@ class Gateway:
   /** Sent in response to receiving a heartbeat to acknowledge that it has been received. Sent by server. */
   static OP_HEARTBEAT_ACK ::= 11
 
-  url/string
   network_/net.Interface? := null
   websocket_/http.WebSocket? := null
   heartbeat_task_/Task? := null
   token_/string
+  logger_/log.Logger
 
   /**
   Builds a gateway object.
-
-  The $url argument is given by a call to "/gateway/bot" (see $Client.listen_for_notifications).
   Generally, you should not need to call this constructor directly.
   */
-  constructor .url --token/string:
+  constructor --token/string --logger/log.Logger:
     token_ = token
+    logger_ = logger
 
-  connect [block]:
+  /**
+  Connects to the Gateway and starts listening for events.
+  The $gateway_url argument is given by a call to "/gateway/bot" (see $Client.listen).
+  */
+  connect_and_listen --intents/int gateway_url/string [block]:
+    session_id/string? := null
+    resume_gateway_url/string? := null
+    sequence_number/int? := null
     network_ = net.open
-    headers := http.Headers
-    client := http.Client.tls network_
-        --root_certificates=[certificate_roots.BALTIMORE_CYBERTRUST_ROOT]
-    url_with_query := "$url/?v=$API_VERSION&encoding=json"
-    websocket_ = client.web_socket --uri=url_with_query --headers=headers
+    try:
+      while true:
+        should_reconnect := false
+        catch --unwind=(: not should_reconnect):
+          if websocket_:
+            websocket_.close
+            websocket_ = null
+
+          headers := http.Headers
+          client := http.Client.tls network_
+              --root_certificates=[certificate_roots.BALTIMORE_CYBERTRUST_ROOT]
+
+          should_resume := session_id and sequence_number
+          url := should_resume ? resume_gateway_url : gateway_url
+          url_with_query := "$url/?v=$API_VERSION_&encoding=json"
+          websocket_ = client.web_socket --uri=url_with_query --headers=headers
+
+          if should_resume:
+            logger_.info "trying to resume to gateway"
+            resume_ session_id sequence_number
+          else:
+            logger_.info "trying to (re)connect to gateway"
+            if heartbeat_task_:
+              heartbeat_task_.cancel
+              heartbeat_task_ = null
+            sequence_number = null
+
+            heartbeat_interval_ms := connect_ gateway_url intents
+            jitter := random heartbeat_interval_ms
+            heartbeat_task_ = task::
+              sleep --ms=jitter
+              while true:
+                catch:
+                  assert: OP_HEARTBEAT == 1
+                  websocket_.send "{\"op\": 1, \"d\": $sequence_number}"
+                  sleep --ms=heartbeat_interval_ms
+
+
+          should_reconnect = true
+          while data := websocket_.receive:
+            logger_.debug "received" --tags={ "data": data }
+            decoded := json.parse data
+            event_sequence_number := decoded.get "s"
+            if event_sequence_number:
+              sequence_number = event_sequence_number
+
+            if decoded["op"] == OP_INVALID_SESSION:
+              if not decoded["d"]:
+                // The inner 'd' key is a boolean that indicates whether the session
+                // may be resumable.
+                session_id = null
+                resume_gateway_url = null
+              break
+
+            if decoded["op"] == OP_RECONNECT:
+              logger_.info "request to reconnect"
+              break
+
+            if decoded["op"] == OP_HEARTBEAT_ACK:
+              continue
+
+            if decoded["op"] == OP_DISPATCH:
+              event := Event.from_json decoded["t"] decoded["d"]
+
+              if event is EventReady:
+                ready := event as EventReady
+                session_id = ready.session_id
+                resume_gateway_url = ready.resume_gateway_url
+
+              // Make sure the unused variables can be garbage collected.
+              data = null
+              decoded = null
+              block.call event
+
+          block.call EventDisconnected
+    finally:
+      close
+
+  /** Connects and returns the heartbeat interval. */
+  connect_ gateway_url/string intents/int -> int:
     hello := websocket_.receive
     decoded := json.parse hello
-
+    if decoded["op"] != OP_HELLO:
+      throw "Expected OP_HELLO, got $decoded"
     heartbeat_interval_ms := decoded["d"]["heartbeat_interval"]
-    jitter := random heartbeat_interval_ms
-    heartbeat_task_ = task::
-      sleep --ms=jitter
-      while true:
-        websocket_.send "{\"op\": 1, \"d\": null}".to_byte_array
-        sleep --ms=heartbeat_interval_ms
 
     // Identify.
-    intents := 0
-      | INTENT_GUILDS
-      | INTENT_GUILD_MEMBERS
-      | INTENT_GUILD_MESSAGES
-      | INTENT_GUILD_MESSAGE_REACTIONS
-      | INTENT_GUILD_MESSAGE_TYPING
-      | INTENT_DIRECT_MESSAGES
-      | INTENT_DIRECT_MESSAGE_REACTIONS
-      | INTENT_DIRECT_MESSAGE_TYPING
-      | INTENT_GUILD_MESSAGE_CONTENT
+    identify/Identify? := Identify
+        --token=token_
+        --intents=intents
+        --properties=ConnectionProperties
+            --os="linux"
+            --browser="Toit"
+            --device="TBD"
 
     payload := json.stringify {
       "op": OP_IDENTIFY,
-      "d": {
-        "token": token_,
-        "intents": intents,
-        "properties": {
-          "os": "linux",
-          "browser": "Toit",
-          "device": "TBD"
-        },
-      }
+      "d": identify.to_json
+    }
+    websocket_.send payload
+    return heartbeat_interval_ms
+
+  resume_ session_id/string sequence_number/int:
+    resume := Resume
+        --token=token_
+        --session_id=session_id
+        --seq=sequence_number
+
+    payload := json.stringify {
+      "op": OP_RESUME,
+      "d": resume.to_json
     }
     websocket_.send payload
 
-    while data := websocket_.receive:
-      block.call (json.parse data)
-
-    // TODO(florian): we got disconnected.
-    // For now just close everything down.
-    close
-
-  close -> none:
+  close --keep_network/bool=false -> none:
     if heartbeat_task_:
       heartbeat_task_.cancel
       heartbeat_task_ = null
-    if network_:
-      network_.close
-      network_ = null
     if websocket_:
       websocket_.close
       websocket_ = null
+    if network_ and not keep_network:
+      network_.close
+      network_ = null
 
 class Client:
   token_/string
@@ -175,9 +251,13 @@ class Client:
   client_/http.Client? := null
   network_/net.Interface? := null
   gateway_/Gateway? := null
+  logger_/log.Logger
 
-  constructor --token/string:
+  constructor
+      --token/string
+      --logger/log.Logger=(log.default.with_level log.INFO_LEVEL):
     token_ = token
+    logger_ = logger.with_name "discord"
 
   connect -> none:
     network_ = net.open
@@ -195,11 +275,22 @@ class Client:
       network_.close
       network_ = null
 
-  listen_for_notifications [block]:
+  /**
+  Starts a Gateway and listens for notifications.
+  Automatically sends heartbeats to the server.
+  Intercepts some messages that are only relevant to maintaining the
+    gateway connection. Most notifications are passed to the given $block.
+
+  Handling of new events is blocked until the $block returns. The $block
+    should thus only take a short time to handle events.
+  */
+  listen --intents/int [block]:
     gateway_response := request_ "/gateway/bot"
     url := gateway_response["url"]
-    gateway_ = Gateway url --token=token_
-    gateway_.connect block
+    gateway_ = Gateway --token=token_ --logger=(logger_.with_name "gateway")
+    gateway_.connect_and_listen url
+        --intents=intents
+        block
 
   send_message message/string --channel_id/string:
     payload := {
@@ -208,22 +299,40 @@ class Client:
     }
     request_ "/channels/$channel_id/messages" --payload=payload
 
-  me -> Map:
-    return request_ "/users/@me"
+  /** Returns the $User object for the bot. */
+  me -> User:
+    return User.from_json (request_ "/users/@me")
 
+  /** Returns a list of $Guild objects the bot is a member of. */
   guilds -> List:
-    return request_ "/users/@me/guilds"
+    json_guilds := request_ "/users/@me/guilds"
+    return json_guilds.map: Guild.from_json it
 
+  /** Returns a list of $Channel objects in the given $guild_id. */
   channels guild_id/string -> List:
-    return request_ "/guilds/$guild_id/channels"
+    channel_list := request_ "/guilds/$guild_id/channels"
+    return channel_list.map: Channel.from_json it
 
-  channel channel_id/string -> Map:
-    return request_ "/channels/$channel_id"
+  /** Returns the $Channel object for the given $channel_id. */
+  channel channel_id/string -> Channel:
+    channel_response := request_ "/channels/$channel_id"
+    return Channel.from_json channel_response
 
+  /** Triggers the typing indicator for the given $channel_id. */
+  // TODO(florian): this function doesn't seem to work.
+  // I got disconnected when I used it.
+  trigger_typing --channel_id/string:
+    request_ "/channels/$channel_id/typing" --method=http.POST
+
+  /**
+  Returns a list of $Message objects in the given $channel_id.
+  If $limit is given, only the last $limit messages are returned.
+  */
   messages channel_id/string --limit/int?=null -> List:
     path := "/channels/$channel_id/messages"
     if limit: path = "$path?limit=$limit"
-    return request_ path
+    messages_response := request_ path
+    return messages_response.map: Message.from_json it
 
   request_ -> any
       path/string
@@ -231,19 +340,18 @@ class Client:
       --method/string=(payload ? http.POST : http.GET):
     headers := http.Headers
     headers.add "Authorization" "Bot $token_"
-    headers.add "User-Agent" "DiscordBot/$BOT_VERSION toit-discord"
+    headers.add "User-Agent" "DiscordBot/$BOT_VERSION_ toit-discord"
     response/http.Response? := ?
     if payload:
-      response = client_.post_json payload --host=API_HOST --path="$API_PATH/$path" --headers=headers
+      response = client_.post_json payload --host=API_HOST_ --path="$API_PATH_/$path" --headers=headers
     else:
       headers.add "Content-Type" "application/json"
       response = client_.get
-          API_HOST
-          "$API_PATH/$path"
+          API_HOST_
+          "$API_PATH_/$path"
           --headers=headers
     if response.status_code != 200:
       throw "HTTP error: $response.status_code"
 
     decoded := json.decode_stream response.body
-    // print (json.stringify decoded)
     return decoded
