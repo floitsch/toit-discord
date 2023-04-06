@@ -2,6 +2,10 @@
 
 A minimal Discord API client for Toit.
 
+This library was written with a specific goal in mind. As such, not the
+whole API is implemented. If you are missing functionality file a
+feature request.
+
 ## Token
 You need to create a bot account and get a token.
 
@@ -11,13 +15,11 @@ You need to create a bot account and get a token.
 - Click "Add Bot".
 - Click "Yes, do it!".
 - Reset the token and copy it. Pass it as argument to the Discord client.
-
-If you want to read messages, also enable the privileged gateway intents on the same page.
-  Specifically, enable the "Message Content Intent".
-
-- Go to the "OAuth2" tab.
+- If you want to read messages, also enable the privileged gateway intents
+  on the same page. Specifically, enable the "Message Content Intent".
 
 ## Adding a bot to a server
+Go to the "OAuth2" tab.
 
 For authorization, there are two options:
 - create a custom URL, or
@@ -30,11 +32,12 @@ In both cases, go to the "OAuth2" section.
 
 For the custom URL, go to the URL Generator. Click on "bot" (but no other) and
 then select the permissions you want. Give this URL to users who want to add the
-bot.
+bot. Note: if the bot is private, you are the only one who can add it to
+guilds.
 
 For the default authorization link, go to the "General" tab, and change the
-  Authorization Method to "In-app Authorization" in the "Default Authorization Link"
-  section. Choose "bot" and the permissions the bot should have.
+Authorization Method to "In-app Authorization" in the "Default Authorization Link"
+section. Choose "bot" and the permissions the bot should have.
 
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker](https://github.com/floitsch/toit-discord/issues).
