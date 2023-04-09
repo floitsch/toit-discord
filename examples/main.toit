@@ -37,7 +37,6 @@ main --token/string --url/string?:
     print "To invite the bot to a channel go to $url"
 
   client := Client --token=token
-  client.connect
 
   my_id/string? := null
 

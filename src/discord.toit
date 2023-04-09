@@ -259,8 +259,6 @@ class Client:
       --logger/log.Logger=(log.default.with_level log.INFO_LEVEL):
     token_ = token
     logger_ = logger.with_name "discord"
-
-  connect -> none:
     network_ = net.open
     client_ = http.Client.tls network_
       --root_certificates=[CERTIFICATE_]
