@@ -1,10 +1,10 @@
 # Discord
 
-A minimal Discord API client for Toit.
+A minimal Discord client in Toit.
 
-This library was written with a specific goal in mind. As such, not the
-whole API is implemented. If you are missing functionality file a
-feature request.
+This library is a work in progress. If you are missing a feature, please open an issue.
+
+Patches are welcome.
 
 ## Token
 You need to create a bot account and get a token.

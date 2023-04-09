@@ -401,6 +401,10 @@ class EventMessageDelete extends EventMessage:
   stringify -> string:
     return "EventMessageDelete: $message"
 
+/**
+An unknown event.
+Used for events that are not yet implemented.
+*/
 class EventOther extends Event:
   /** The raw data. */
   data/Map
