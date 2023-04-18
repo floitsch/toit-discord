@@ -101,6 +101,7 @@ class Gateway:
   network_/net.Interface? := null
   websocket_/http.WebSocket? := null
   heartbeat_task_/Task? := null
+  heartbeat_interval_ms_/int? := null
   token_/string
   logger_/log.Logger
 
@@ -124,7 +125,7 @@ class Gateway:
     try:
       while true:
         should_reconnect := false
-        catch --unwind=(: not should_reconnect):
+        exception := catch --unwind=(: not should_reconnect):
           if websocket_:
             websocket_.close
             websocket_ = null
@@ -139,28 +140,43 @@ class Gateway:
           websocket_ = client.web_socket --uri=url_with_query --headers=headers
 
           if should_resume:
-            logger_.info "trying to resume to gateway"
+            logger_.info "trying to resume to gateway" --tags={
+              "session-id": session_id,
+            }
             resume_ session_id sequence_number
+            logger_.info "resumed"
           else:
             logger_.info "trying to (re)connect to gateway"
-            if heartbeat_task_:
-              heartbeat_task_.cancel
-              heartbeat_task_ = null
             sequence_number = null
 
-            heartbeat_interval_ms := connect_ gateway_url intents
-            jitter := random heartbeat_interval_ms
-            heartbeat_task_ = task::
-              sleep --ms=jitter
-              while true:
-                catch:
-                  assert: OP_HEARTBEAT == 1
-                  websocket_.send "{\"op\": 1, \"d\": $sequence_number}"
-                  sleep --ms=heartbeat_interval_ms
+            heartbeat_interval_ms_ = connect_ gateway_url intents
+            logger_.info "connected" --tags={
+              "heartbeat-interval": heartbeat_interval_ms_,
+            }
+
+          jitter := random heartbeat_interval_ms_
+          heartbeat_task_ = task::
+            sleep --ms=jitter
+            while true:
+              catch --trace:
+                assert: OP_HEARTBEAT == 1
+                logger_.debug "sending heartbeat" --tags={
+                  "sequence-number": sequence_number
+                }
+                websocket_.send "{\"op\": 1, \"d\": $sequence_number}"
+              sleep --ms=heartbeat_interval_ms_
 
 
           should_reconnect = true
-          while data := websocket_.receive:
+          while true:
+            data := null
+            timeout := 2 * heartbeat_interval_ms_ or (Duration --m=2).in_ms
+            with_timeout --ms=timeout:
+              data = websocket_.receive
+            if not data:
+              logger_.info "null data"
+              break
+
             logger_.debug "received" --tags={ "data": data }
             decoded := json.parse data
             event_sequence_number := decoded.get "s"
@@ -195,7 +211,14 @@ class Gateway:
               decoded = null
               block.call event
 
-          block.call EventDisconnected
+        if exception == DEADLINE_EXCEEDED_ERROR:
+          logger_.info "heartbeat timeout"
+
+        if heartbeat_task_:
+          heartbeat_task_.cancel
+          heartbeat_task_ = null
+
+        block.call EventDisconnected
     finally:
       close
 
