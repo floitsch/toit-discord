@@ -101,7 +101,6 @@ class Gateway:
   network_/net.Interface? := null
   websocket_/http.WebSocket? := null
   heartbeat_task_/Task? := null
-  heartbeat_interval_ms_/int? := null
   token_/string
   logger_/log.Logger
 
@@ -139,22 +138,25 @@ class Gateway:
           url_with_query := "$url/?v=$API_VERSION_&encoding=json"
           websocket_ = client.web_socket --uri=url_with_query --headers=headers
 
+          heartbeat_interval_ms/int := ?
           if should_resume:
             logger_.info "trying to resume to gateway" --tags={
               "session-id": session_id,
             }
-            resume_ session_id sequence_number
-            logger_.info "resumed"
+            heartbeat_interval_ms = resume_ session_id sequence_number
+            logger_.info "resumed" --tags={
+              "heartbeat-interval": heartbeat_interval_ms,
+            }
           else:
             logger_.info "trying to (re)connect to gateway"
             sequence_number = null
 
-            heartbeat_interval_ms_ = connect_ gateway_url intents
+            heartbeat_interval_ms = connect_ gateway_url intents
             logger_.info "connected" --tags={
-              "heartbeat-interval": heartbeat_interval_ms_,
+              "heartbeat-interval": heartbeat_interval_ms,
             }
 
-          jitter := random heartbeat_interval_ms_
+          jitter := random heartbeat_interval_ms
           heartbeat_task_ = task::
             sleep --ms=jitter
             while true:
@@ -164,13 +166,13 @@ class Gateway:
                   "sequence-number": sequence_number
                 }
                 websocket_.send "{\"op\": 1, \"d\": $sequence_number}"
-              sleep --ms=heartbeat_interval_ms_
+              sleep --ms=heartbeat_interval_ms
 
 
           should_reconnect = true
           while true:
             data := null
-            timeout := 2 * heartbeat_interval_ms_ or (Duration --m=2).in_ms
+            timeout := 2 * heartbeat_interval_ms or (Duration --m=2).in_ms
             with_timeout --ms=timeout:
               data = websocket_.receive
             if not data:
@@ -246,7 +248,7 @@ class Gateway:
     websocket_.send payload
     return heartbeat_interval_ms
 
-  resume_ session_id/string sequence_number/int:
+  resume_ session_id/string sequence_number/int -> int:
     resume := Resume
         --token=token_
         --session_id=session_id
@@ -257,6 +259,12 @@ class Gateway:
       "d": resume.to_json
     }
     websocket_.send payload
+
+    hello := websocket_.receive
+    decoded := json.parse hello
+    if decoded["op"] != OP_HELLO:
+      throw "Expected OP_HELLO, got $decoded"
+    return decoded["d"]["heartbeat_interval"]
 
   close --keep_network/bool=false -> none:
     if heartbeat_task_:
