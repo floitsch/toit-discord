@@ -1561,6 +1561,12 @@ class Message:
   */
   role_subscription_data/RoleSubscriptionData?
 
+  /** The guild id of the message. */
+  guild_id/string?
+
+  /** The (partial) guild member object of the message's author. */
+  member/GuildMember?
+
   constructor.from_json json/Map:
     id = json["id"]
     channel_id = json["channel_id"]
@@ -1640,6 +1646,15 @@ class Message:
       role_subscription_data = RoleSubscriptionData.from_json role_subscription_data_entry
     else:
       role_subscription_data = null
+    if json.get "guild_id":
+      guild_id = json["guild_id"]
+    else:
+      guild_id = null
+    member_entry := json.get "member"
+    if member_entry:
+      member = GuildMember.from_json member_entry
+    else:
+      member = null
 
   flags -> MessageFlags?:
     if flags_value == null: return null

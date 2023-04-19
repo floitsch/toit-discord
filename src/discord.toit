@@ -124,7 +124,7 @@ class Gateway:
     try:
       while true:
         should_reconnect := false
-        exception := catch --unwind=(: not should_reconnect):
+        exception := catch --trace --unwind=(: not should_reconnect):
           if websocket_:
             websocket_.close
             websocket_ = null
@@ -347,6 +347,11 @@ class Client:
   channel channel_id/string -> Channel:
     channel_response := request_ "/channels/$channel_id"
     return Channel.from_json channel_response
+
+  /** Returns the $GuildMember with the given $user_id in the given $guild_id. */
+  guild_member --guild_id/string --user_id/string -> GuildMember:
+    member_response := request_ "/guilds/$guild_id/members/$user_id"
+    return GuildMember.from_json member_response
 
   /** Triggers the typing indicator for the given $channel_id. */
   // TODO(florian): this function doesn't seem to work.
