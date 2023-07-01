@@ -1570,10 +1570,10 @@ class Message:
   constructor.from_json json/Map:
     id = json["id"]
     channel_id = json["channel_id"]
-    author_entry := json["author"]
     if json.get "webhook_id":
       author = WebhookUser.from_json json
     else:
+      author_entry := json["author"]
       author = User.from_json author_entry
     content = json["content"]
     timestamp_value = json["timestamp"]
