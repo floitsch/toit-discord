@@ -1576,6 +1576,8 @@ class Message:
       author_entry := json.get "author"
       if author_entry:
         author = User.from_json author_entry
+      else:
+        author = null
     content = json["content"]
     timestamp_value = json["timestamp"]
     edited_timestamp_value = json.get "edited_timestamp"
