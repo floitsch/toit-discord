@@ -1403,7 +1403,7 @@ class Message:
   The author of this message.
   If $webhook_id is null then this field is a $User, otherwise a $WebhookUser.
   */
-  author/Author
+  author/Author?
 
   /**
   The content of the message.
@@ -1573,8 +1573,9 @@ class Message:
     if json.get "webhook_id":
       author = WebhookUser.from_json json
     else:
-      author_entry := json["author"]
-      author = User.from_json author_entry
+      author_entry := json.get "author"
+      if author_entry:
+        author = User.from_json author_entry
     content = json["content"]
     timestamp_value = json["timestamp"]
     edited_timestamp_value = json.get "edited_timestamp"
@@ -1744,15 +1745,15 @@ class WebhookUser implements Author:
   id/string
 
   /** The username of the webhook. */
-  username/string
+  username/string?
 
   /** The avatar hash of the webhook. */
-  avatar/string
+  avatar/string?
 
   constructor.from_json json/Map:
     id = json["id"]
-    username = json["username"]
-    avatar = json["avatar"]
+    username = json.get "username"
+    avatar = json.get "avatar"
 
 class ChannelMention:
   /** The id of the channel. */
