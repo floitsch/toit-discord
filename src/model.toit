@@ -1408,7 +1408,7 @@ class Message:
   /**
   The content of the message.
   Empty if the app has not configured (or hasn't been approved for) the
-    $Gateway.INTENT_GUILD_MESSAGE_CONTENT privileged intent.
+    $INTENT_GUILD_MESSAGE_CONTENT privileged intent.
   */
   content/string
 
@@ -1453,7 +1453,7 @@ class Message:
   A list of $Attachment objects.
 
   Empty if the app has not configured (or hasn't been approved for) the
-    $Gateway.INTENT_GUILD_MESSAGE_CONTENT privileged intent.
+    $INTENT_GUILD_MESSAGE_CONTENT privileged intent.
   */
   attachments/List?
 
@@ -1536,7 +1536,7 @@ class Message:
   /**
   Sent if the message contains components like buttons, action rows, or other interactive components.
   Empty if the app has not configured (or hasn't been approved for) the
-    $Gateway.INTENT_GUILD_MESSAGE_CONTENT privileged intent.
+    $INTENT_GUILD_MESSAGE_CONTENT privileged intent.
   A list of $Component objects.
   */
   components/List?
