@@ -1257,7 +1257,7 @@ class GuildMember:
   is_mute/bool
 
   /** Guild member flags represented as a bit set. */
-  flags_value/int
+  flags_value/int?
 
   /**
   Whether the user has not yet passed the guild's Membership Screening requirements.
