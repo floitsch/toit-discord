@@ -1,4 +1,4 @@
-sdk: ^2.0.0-alpha.128
+sdk: ^2.0.0-alpha.145
 prefixes:
   discord: ..
   host: pkg-host
@@ -16,10 +16,10 @@ packages:
   pkg-http:
     url: github.com/toitlang/pkg-http
     name: http
-    version: 2.6.0
-    hash: 97bdea9f0f0c78bd41d85d8ac071527caa76b09d
+    version: 2.8.0
+    hash: 81754d64fe466cd00cc494ec515da8749bf04975
   toit-cert-roots:
     url: github.com/toitware/toit-cert-roots
     name: certificate_roots
-    version: 1.6.1
-    hash: 55d3be82ed53d8d332338b2de931865cf69fe48b
+    version: 1.6.2
+    hash: cfa85ca31b136a99654674b3ada80d4c0ed9b791
