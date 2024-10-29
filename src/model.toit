@@ -1858,7 +1858,7 @@ class Embed:
   url/string?
 
   /** The timestamp of the embed content. */
-  timestamp_value/string
+  timestamp_value/string?
 
   /** The color code of the embed. */
   color/int?

@@ -130,7 +130,6 @@ class Gateway:
 
           headers := http.Headers
           client := http.Client.tls network_
-              --root_certificates=[certificate_roots.BALTIMORE_CYBERTRUST_ROOT]
 
           should_resume := session_id and sequence_number
           url := should_resume ? resume_gateway_url : gateway_url
