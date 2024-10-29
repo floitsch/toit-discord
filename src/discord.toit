@@ -65,7 +65,6 @@ INTENT_AUTO_MODERATION_EXECUTION ::= 1 << 21
 BOT_VERSION_ ::= "0.1"
 
 API_HOST_ ::= "discord.com"
-CERTIFICATE_ ::= certificate_roots.BALTIMORE_CYBERTRUST_ROOT
 API_VERSION_ ::= "10"
 API_PATH_ ::= "/api/v$API_VERSION_"
 
@@ -288,11 +287,11 @@ class Client:
   constructor
       --token/string
       --logger/log.Logger=(log.default.with_level log.INFO_LEVEL):
+    certificate-roots.install-common-trusted-roots
     token_ = token
     logger_ = logger.with_name "discord"
     network_ = net.open
     client_ = http.Client.tls network_
-      --root_certificates=[CERTIFICATE_]
 
   close -> none:
     if gateway_:
