@@ -38,9 +38,9 @@ main --token/string --url/string?:
 
   client := Client --token=token
 
-  my_id/string? := null
+  my-id/string? := null
 
-  start_delayed := ::
+  start-delayed := ::
     guilds := client.guilds
     print "I am in $guilds.size guilds"
 
@@ -49,25 +49,25 @@ main --token/string --url/string?:
       print "- $guild.name has $channels.size channels."
 
       filtered := channels.filter: | channel/Channel | channel.name == "general"
-      if not filtered.is_empty:
-        general_channel_id := filtered[0].id
-        print "The general channel id is $general_channel_id"
+      if not filtered.is-empty:
+        general-channel-id := filtered[0].id
+        print "The general channel id is $general-channel-id"
 
-        messages := client.messages general_channel_id --limit=5
+        messages := client.messages general-channel-id --limit=5
         print "The last 5 messages are:"
         messages.do: print "  $it"
 
   intents := 0
-    | INTENT_GUILDS
-    | INTENT_GUILD_MEMBERS
-    | INTENT_GUILD_MESSAGES
-    | INTENT_GUILD_MESSAGE_REACTIONS
-    | INTENT_GUILD_MESSAGE_TYPING
-    | INTENT_DIRECT_MESSAGES
-    | INTENT_DIRECT_MESSAGE_REACTIONS
-    | INTENT_DIRECT_MESSAGE_TYPING
+    | INTENT-GUILDS
+    | INTENT-GUILD-MEMBERS
+    | INTENT-GUILD-MESSAGES
+    | INTENT-GUILD-MESSAGE-REACTIONS
+    | INTENT-GUILD-MESSAGE-TYPING
+    | INTENT-DIRECT-MESSAGES
+    | INTENT-DIRECT-MESSAGE-REACTIONS
+    | INTENT-DIRECT-MESSAGE-TYPING
     // Make sure to enable privileged gateway intents for your bot.
-    | INTENT_GUILD_MESSAGE_CONTENT
+    | INTENT-GUILD-MESSAGE-CONTENT
 
   // Avoid taking too much time when handling events.
   client.listen --intents=intents: | event/Event? |
@@ -76,20 +76,20 @@ main --token/string --url/string?:
       // It's a good idea to wait with other connections (or anything that could
       //   use memory) until that event has been processed.
       ready/EventReady? := event as EventReady
-      my_id = ready.user.id
+      my-id = ready.user.id
       // Let the GC delete the event and the ready object.
       event = null
       ready = null
-      start_delayed.call
+      start-delayed.call
 
     if event is EventMessageCreate:
       message := (event as EventMessageCreate).message
-      if message.author.id == my_id: continue.listen
+      if message.author.id == my-id: continue.listen
 
       print "Message: $message.content"
-      if (message.mentions.any: it.id == my_id):
+      if (message.mentions.any: it.id == my-id):
         print "I was mentioned in $message"
-        client.send_message "Hello from Toit" --channel_id=message.channel_id
+        client.send-message "Hello from Toit" --channel-id=message.channel-id
 
     if event is EventMessageReactionAdd:
       reaction := event as EventMessageReactionAdd

@@ -6,14 +6,14 @@
 Discord API: https://discord.com/developers/docs/reference
 */
 
-import certificate_roots
+import certificate-roots
 import encoding.json
 import http
 import log
 import net
 
 import .model
-import .gateway_model
+import .gateway-model
 export *
 
 /**
@@ -42,31 +42,31 @@ For the default authorization link, go to the "General" tab, and change the
   section. Choose "bot" and the permissions the bot should have.
 */
 
-INTENT_GUILDS ::= 1 << 0
-INTENT_GUILD_MEMBERS ::= 1 << 1
-INTENT_GUILD_MODERATION ::= 1 << 2
-INTENT_GUILD_EMOJIS_AND_STICKERS ::= 1 << 3
-INTENT_GUILD_INTEGRATIONS ::= 1 << 4
-INTENT_GUILD_WEBHOOKS ::= 1 << 5
-INTENT_GUILD_INVITES ::= 1 << 6
-INTENT_GUILD_VOICE_STATES ::= 1 << 7
-INTENT_GUILD_PRESENCES ::= 1 << 8
-INTENT_GUILD_MESSAGES ::= 1 << 9
-INTENT_GUILD_MESSAGE_REACTIONS ::= 1 << 10
-INTENT_GUILD_MESSAGE_TYPING ::= 1 << 11
-INTENT_DIRECT_MESSAGES ::= 1 << 12
-INTENT_DIRECT_MESSAGE_REACTIONS ::= 1 << 13
-INTENT_DIRECT_MESSAGE_TYPING ::= 1 << 14
-INTENT_GUILD_MESSAGE_CONTENT ::= 1 << 15
-INTENT_GUILD_SCHEDULED_EVENTS ::= 1 << 16
-INTENT_AUTO_MODERATION_CONFIGURATION ::= 1 << 20
-INTENT_AUTO_MODERATION_EXECUTION ::= 1 << 21
+INTENT-GUILDS ::= 1 << 0
+INTENT-GUILD-MEMBERS ::= 1 << 1
+INTENT-GUILD-MODERATION ::= 1 << 2
+INTENT-GUILD-EMOJIS-AND-STICKERS ::= 1 << 3
+INTENT-GUILD-INTEGRATIONS ::= 1 << 4
+INTENT-GUILD-WEBHOOKS ::= 1 << 5
+INTENT-GUILD-INVITES ::= 1 << 6
+INTENT-GUILD-VOICE-STATES ::= 1 << 7
+INTENT-GUILD-PRESENCES ::= 1 << 8
+INTENT-GUILD-MESSAGES ::= 1 << 9
+INTENT-GUILD-MESSAGE-REACTIONS ::= 1 << 10
+INTENT-GUILD-MESSAGE-TYPING ::= 1 << 11
+INTENT-DIRECT-MESSAGES ::= 1 << 12
+INTENT-DIRECT-MESSAGE-REACTIONS ::= 1 << 13
+INTENT-DIRECT-MESSAGE-TYPING ::= 1 << 14
+INTENT-GUILD-MESSAGE-CONTENT ::= 1 << 15
+INTENT-GUILD-SCHEDULED-EVENTS ::= 1 << 16
+INTENT-AUTO-MODERATION-CONFIGURATION ::= 1 << 20
+INTENT-AUTO-MODERATION-EXECUTION ::= 1 << 21
 
-BOT_VERSION_ ::= "0.1"
+BOT-VERSION_ ::= "0.1"
 
-API_HOST_ ::= "discord.com"
-API_VERSION_ ::= "10"
-API_PATH_ ::= "/api/v$API_VERSION_"
+API-HOST_ ::= "discord.com"
+API-VERSION_ ::= "10"
+API-PATH_ ::= "/api/v$API-VERSION_"
 
 // https://discord.com/developers/docs/topics/gateway
 
@@ -75,31 +75,31 @@ A gateway is a WebSocket connection to the Discord API.
 */
 class Gateway:
   /** An event was dispatched. Sent by server. */
-  static OP_DISPATCH ::= 0
+  static OP-DISPATCH ::= 0
   /** Fired periodically by the client to keep the connection alive. */
-  static OP_HEARTBEAT ::= 1
+  static OP-HEARTBEAT ::= 1
   /** Starts a new session during the initial handshake. Sent by client. */
-  static OP_IDENTIFY ::= 2
+  static OP-IDENTIFY ::= 2
   /** Update the client's presence. Sent by client. */
-  static OP_PRESENCE_UPDATE ::= 3
+  static OP-PRESENCE-UPDATE ::= 3
   /** Used to join/leave or move between voice channels. Sent by client. */
-  static OP_VOICE_STATE_UPDATE ::= 4
+  static OP-VOICE-STATE-UPDATE ::= 4
   /** Resume a previous session that was disconnected. Sent by client. */
-  static OP_RESUME ::= 6
+  static OP-RESUME ::= 6
   /** Request to reconnect and resume immediately. Sent by server. */
-  static OP_RECONNECT ::= 7
+  static OP-RECONNECT ::= 7
   /** Request information about offline guild members in a large guild. Sent by client. */
-  static OP_REQUEST_GUILD_MEMBERS ::= 8
+  static OP-REQUEST-GUILD-MEMBERS ::= 8
   /** The session has been invalidated. Request to reconnect and identify/resume accordingly. Sent by server. */
-  static OP_INVALID_SESSION ::= 9
+  static OP-INVALID-SESSION ::= 9
   /** Sent immediately after connecting, contains the `heartbeat_interval` to use. Sent by server. */
-  static OP_HELLO ::= 10
+  static OP-HELLO ::= 10
   /** Sent in response to receiving a heartbeat to acknowledge that it has been received. Sent by server. */
-  static OP_HEARTBEAT_ACK ::= 11
+  static OP-HEARTBEAT-ACK ::= 11
 
   network_/net.Interface? := null
   websocket_/http.WebSocket? := null
-  heartbeat_task_/Task? := null
+  heartbeat-task_/Task? := null
   token_/string
   logger_/log.Logger
 
@@ -113,17 +113,17 @@ class Gateway:
 
   /**
   Connects to the Gateway and starts listening for events.
-  The $gateway_url argument is given by a call to "/gateway/bot" (see $Client.listen).
+  The $gateway-url argument is given by a call to "/gateway/bot" (see $Client.listen).
   */
-  connect_and_listen --intents/int gateway_url/string [block]:
-    session_id/string? := null
-    resume_gateway_url/string? := null
-    sequence_number/int? := null
+  connect-and-listen --intents/int gateway-url/string [block]:
+    session-id/string? := null
+    resume-gateway-url/string? := null
+    sequence-number/int? := null
     network_ = net.open
     try:
       while true:
-        should_reconnect := false
-        exception := catch --trace --unwind=(: not should_reconnect):
+        should-reconnect := false
+        exception := catch --trace --unwind=(: not should-reconnect):
           if websocket_:
             websocket_.close
             websocket_ = null
@@ -131,47 +131,47 @@ class Gateway:
           headers := http.Headers
           client := http.Client.tls network_
 
-          should_resume := session_id and sequence_number
-          url := should_resume ? resume_gateway_url : gateway_url
-          url_with_query := "$url/?v=$API_VERSION_&encoding=json"
-          websocket_ = client.web_socket --uri=url_with_query --headers=headers
+          should-resume := session-id and sequence-number
+          url := should-resume ? resume-gateway-url : gateway-url
+          url-with-query := "$url/?v=$API-VERSION_&encoding=json"
+          websocket_ = client.web-socket --uri=url-with-query --headers=headers
 
-          heartbeat_interval_ms/int := ?
-          if should_resume:
+          heartbeat-interval-ms/int := ?
+          if should-resume:
             logger_.info "trying to resume to gateway" --tags={
-              "session-id": session_id,
+              "session-id": session-id,
             }
-            heartbeat_interval_ms = resume_ session_id sequence_number
+            heartbeat-interval-ms = resume_ session-id sequence-number
             logger_.info "resumed" --tags={
-              "heartbeat-interval": heartbeat_interval_ms,
+              "heartbeat-interval": heartbeat-interval-ms,
             }
           else:
             logger_.info "trying to (re)connect to gateway"
-            sequence_number = null
+            sequence-number = null
 
-            heartbeat_interval_ms = connect_ gateway_url intents
+            heartbeat-interval-ms = connect_ gateway-url intents
             logger_.info "connected" --tags={
-              "heartbeat-interval": heartbeat_interval_ms,
+              "heartbeat-interval": heartbeat-interval-ms,
             }
 
-          jitter := random heartbeat_interval_ms
-          heartbeat_task_ = task::
+          jitter := random heartbeat-interval-ms
+          heartbeat-task_ = task::
             sleep --ms=jitter
             while true:
               catch --trace:
-                assert: OP_HEARTBEAT == 1
+                assert: OP-HEARTBEAT == 1
                 logger_.debug "sending heartbeat" --tags={
-                  "sequence-number": sequence_number
+                  "sequence-number": sequence-number
                 }
-                websocket_.send "{\"op\": 1, \"d\": $sequence_number}"
-              sleep --ms=heartbeat_interval_ms
+                websocket_.send "{\"op\": 1, \"d\": $sequence-number}"
+              sleep --ms=heartbeat-interval-ms
 
 
-          should_reconnect = true
+          should-reconnect = true
           while true:
             data := null
-            timeout := 2 * heartbeat_interval_ms or (Duration --m=2).in_ms
-            with_timeout --ms=timeout:
+            timeout := 2 * heartbeat-interval-ms or (Duration --m=2).in-ms
+            with-timeout --ms=timeout:
               data = websocket_.receive
             if not data:
               logger_.info "null data"
@@ -179,56 +179,56 @@ class Gateway:
 
             logger_.debug "received" --tags={ "data": data }
             decoded := json.parse data
-            event_sequence_number := decoded.get "s"
-            if event_sequence_number:
-              sequence_number = event_sequence_number
+            event-sequence-number := decoded.get "s"
+            if event-sequence-number:
+              sequence-number = event-sequence-number
 
-            if decoded["op"] == OP_INVALID_SESSION:
+            if decoded["op"] == OP-INVALID-SESSION:
               if not decoded["d"]:
                 // The inner 'd' key is a boolean that indicates whether the session
                 // may be resumable.
-                session_id = null
-                resume_gateway_url = null
+                session-id = null
+                resume-gateway-url = null
               break
 
-            if decoded["op"] == OP_RECONNECT:
+            if decoded["op"] == OP-RECONNECT:
               logger_.info "request to reconnect"
               break
 
-            if decoded["op"] == OP_HEARTBEAT_ACK:
+            if decoded["op"] == OP-HEARTBEAT-ACK:
               continue
 
-            if decoded["op"] == OP_DISPATCH:
-              event := Event.from_json decoded["t"] decoded["d"]
+            if decoded["op"] == OP-DISPATCH:
+              event := Event.from-json decoded["t"] decoded["d"]
 
               if event is EventReady:
                 ready := event as EventReady
-                session_id = ready.session_id
-                resume_gateway_url = ready.resume_gateway_url
+                session-id = ready.session-id
+                resume-gateway-url = ready.resume-gateway-url
 
               // Make sure the unused variables can be garbage collected.
               data = null
               decoded = null
               block.call event
 
-        if exception == DEADLINE_EXCEEDED_ERROR:
+        if exception == DEADLINE-EXCEEDED-ERROR:
           logger_.info "heartbeat timeout"
 
-        if heartbeat_task_:
-          heartbeat_task_.cancel
-          heartbeat_task_ = null
+        if heartbeat-task_:
+          heartbeat-task_.cancel
+          heartbeat-task_ = null
 
         block.call EventDisconnected
     finally:
       close
 
   /** Connects and returns the heartbeat interval. */
-  connect_ gateway_url/string intents/int -> int:
+  connect_ gateway-url/string intents/int -> int:
     hello := websocket_.receive
     decoded := json.parse hello
-    if decoded["op"] != OP_HELLO:
+    if decoded["op"] != OP-HELLO:
       throw "Expected OP_HELLO, got $decoded"
-    heartbeat_interval_ms := decoded["d"]["heartbeat_interval"]
+    heartbeat-interval-ms := decoded["d"]["heartbeat_interval"]
 
     // Identify.
     identify/Identify? := Identify
@@ -240,44 +240,44 @@ class Gateway:
             --device="TBD"
 
     payload := json.stringify {
-      "op": OP_IDENTIFY,
-      "d": identify.to_json
+      "op": OP-IDENTIFY,
+      "d": identify.to-json
     }
     websocket_.send payload
-    return heartbeat_interval_ms
+    return heartbeat-interval-ms
 
-  resume_ session_id/string sequence_number/int -> int:
+  resume_ session-id/string sequence-number/int -> int:
     resume := Resume
         --token=token_
-        --session_id=session_id
-        --seq=sequence_number
+        --session-id=session-id
+        --seq=sequence-number
 
     payload := json.stringify {
-      "op": OP_RESUME,
-      "d": resume.to_json
+      "op": OP-RESUME,
+      "d": resume.to-json
     }
     websocket_.send payload
 
     hello := websocket_.receive
     decoded := json.parse hello
-    if decoded["op"] != OP_HELLO:
+    if decoded["op"] != OP-HELLO:
       throw "Expected OP_HELLO, got $decoded"
     return decoded["d"]["heartbeat_interval"]
 
-  close --keep_network/bool=false -> none:
-    if heartbeat_task_:
-      heartbeat_task_.cancel
-      heartbeat_task_ = null
+  close --keep-network/bool=false -> none:
+    if heartbeat-task_:
+      heartbeat-task_.cancel
+      heartbeat-task_ = null
     if websocket_:
       websocket_.close
       websocket_ = null
-    if network_ and not keep_network:
+    if network_ and not keep-network:
       network_.close
       network_ = null
 
 class Client:
   token_/string
-  my_id_/string? := null
+  my-id_/string? := null
   client_/http.Client? := null
   network_/net.Interface? := null
   gateway_/Gateway? := null
@@ -285,10 +285,10 @@ class Client:
 
   constructor
       --token/string
-      --logger/log.Logger=(log.default.with_level log.INFO_LEVEL):
+      --logger/log.Logger=(log.default.with-level log.INFO-LEVEL):
     certificate-roots.install-common-trusted-roots
     token_ = token
-    logger_ = logger.with_name "discord"
+    logger_ = logger.with-name "discord"
     network_ = net.open
     client_ = http.Client.tls network_
 
@@ -313,59 +313,59 @@ class Client:
     should thus only take a short time to handle events.
   */
   listen --intents/int [block]:
-    gateway_response := request_ "/gateway/bot"
-    url := gateway_response["url"]
-    gateway_ = Gateway --token=token_ --logger=(logger_.with_name "gateway")
-    gateway_.connect_and_listen url
+    gateway-response := request_ "/gateway/bot"
+    url := gateway-response["url"]
+    gateway_ = Gateway --token=token_ --logger=(logger_.with-name "gateway")
+    gateway_.connect-and-listen url
         --intents=intents
         block
 
-  send_message message/string --channel_id/string:
+  send-message message/string --channel-id/string:
     payload := {
       "content": "$message",
       "tts": false,
     }
-    request_ "/channels/$channel_id/messages" --payload=payload
+    request_ "/channels/$channel-id/messages" --payload=payload
 
   /** Returns the $User object for the bot. */
   me -> User:
-    return User.from_json (request_ "/users/@me")
+    return User.from-json (request_ "/users/@me")
 
   /** Returns a list of $Guild objects the bot is a member of. */
   guilds -> List:
-    json_guilds := request_ "/users/@me/guilds"
-    return json_guilds.map: Guild.from_json it
+    json-guilds := request_ "/users/@me/guilds"
+    return json-guilds.map: Guild.from-json it
 
-  /** Returns a list of $Channel objects in the given $guild_id. */
-  channels guild_id/string -> List:
-    channel_list := request_ "/guilds/$guild_id/channels"
-    return channel_list.map: Channel.from_json it
+  /** Returns a list of $Channel objects in the given $guild-id. */
+  channels guild-id/string -> List:
+    channel-list := request_ "/guilds/$guild-id/channels"
+    return channel-list.map: Channel.from-json it
 
-  /** Returns the $Channel object for the given $channel_id. */
-  channel channel_id/string -> Channel:
-    channel_response := request_ "/channels/$channel_id"
-    return Channel.from_json channel_response
+  /** Returns the $Channel object for the given $channel-id. */
+  channel channel-id/string -> Channel:
+    channel-response := request_ "/channels/$channel-id"
+    return Channel.from-json channel-response
 
-  /** Returns the $GuildMember with the given $user_id in the given $guild_id. */
-  guild_member --guild_id/string --user_id/string -> GuildMember:
-    member_response := request_ "/guilds/$guild_id/members/$user_id"
-    return GuildMember.from_json member_response
+  /** Returns the $GuildMember with the given $user-id in the given $guild-id. */
+  guild-member --guild-id/string --user-id/string -> GuildMember:
+    member-response := request_ "/guilds/$guild-id/members/$user-id"
+    return GuildMember.from-json member-response
 
-  /** Triggers the typing indicator for the given $channel_id. */
+  /** Triggers the typing indicator for the given $channel-id. */
   // TODO(florian): this function doesn't seem to work.
   // I got disconnected when I used it.
-  trigger_typing --channel_id/string:
-    request_ "/channels/$channel_id/typing" --method=http.POST
+  trigger-typing --channel-id/string:
+    request_ "/channels/$channel-id/typing" --method=http.POST
 
   /**
-  Returns a list of $Message objects in the given $channel_id.
+  Returns a list of $Message objects in the given $channel-id.
   If $limit is given, only the last $limit messages are returned.
   */
-  messages channel_id/string --limit/int?=null -> List:
-    path := "/channels/$channel_id/messages"
+  messages channel-id/string --limit/int?=null -> List:
+    path := "/channels/$channel-id/messages"
     if limit: path = "$path?limit=$limit"
-    messages_response := request_ path
-    return messages_response.map: Message.from_json it
+    messages-response := request_ path
+    return messages-response.map: Message.from-json it
 
   request_ -> any
       path/string
@@ -373,18 +373,18 @@ class Client:
       --method/string=(payload ? http.POST : http.GET):
     headers := http.Headers
     headers.add "Authorization" "Bot $token_"
-    headers.add "User-Agent" "DiscordBot/$BOT_VERSION_ toit-discord"
+    headers.add "User-Agent" "DiscordBot/$BOT-VERSION_ toit-discord"
     response/http.Response? := ?
     if payload:
-      response = client_.post_json payload --host=API_HOST_ --path="$API_PATH_/$path" --headers=headers
+      response = client_.post-json payload --host=API-HOST_ --path="$API-PATH_/$path" --headers=headers
     else:
       headers.add "Content-Type" "application/json"
       response = client_.get
-          API_HOST_
-          "$API_PATH_/$path"
+          API-HOST_
+          "$API-PATH_/$path"
           --headers=headers
-    if response.status_code != 200:
-      throw "HTTP error: $response.status_code"
+    if response.status-code != 200:
+      throw "HTTP error: $response.status-code"
 
-    decoded := json.decode_stream response.body
+    decoded := json.decode-stream response.body
     return decoded
