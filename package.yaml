@@ -3,7 +3,7 @@ description: Discord bot API.
 dependencies:
   certificate_roots:
     url: github.com/toitware/toit-cert-roots
-    version: ^1.6.2
+    version: ^1.10.0
   http:
     url: github.com/toitlang/pkg-http
-    version: ^2.8.0
+    version: ^2.9.0
