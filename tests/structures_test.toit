@@ -6,18 +6,18 @@ import discord.model
 import expect show *
 
 main:
-  test_user
-  test_guild
-  test_guild_member
-  test_channel
-  test_welcome_screen
-  test_message
-  test_emoji
-  test_application
-  test_components
+  test-user
+  test-guild
+  test-guild-member
+  test-channel
+  test-welcome-screen
+  test-message
+  test-emoji
+  test-application
+  test-components
 
-test_user:
-  EXAMPLE_USER := {
+test-user:
+  EXAMPLE-USER := {
     "id": "80351110224678912",
     "username": "Nelly",
     "discriminator": "1337",
@@ -30,21 +30,21 @@ test_user:
     "premium_type": 1,
     "public_flags": 64
   }
-  user := model.User.from_json EXAMPLE_USER
-  expect_equals "80351110224678912" user.id
-  expect_equals "Nelly" user.username
-  expect_equals "1337" user.discriminator
-  expect_equals "8342729096ea3675442027381ff50dfe" user.avatar
-  expect user.is_verified
-  expect_equals "nelly@discord.com" user.email
-  expect_equals 64 user.flags_value
-  expect_equals "06c16474723fe537c283b8efa61a30c8" user.banner
-  expect_equals 16711680 user.accent_color
-  expect_equals 1 user.premium_type
-  expect_equals 64 user.public_flags_value
+  user := model.User.from-json EXAMPLE-USER
+  expect-equals "80351110224678912" user.id
+  expect-equals "Nelly" user.username
+  expect-equals "1337" user.discriminator
+  expect-equals "8342729096ea3675442027381ff50dfe" user.avatar
+  expect user.is-verified
+  expect-equals "nelly@discord.com" user.email
+  expect-equals 64 user.flags-value
+  expect-equals "06c16474723fe537c283b8efa61a30c8" user.banner
+  expect-equals 16711680 user.accent-color
+  expect-equals 1 user.premium-type
+  expect-equals 64 user.public-flags-value
 
-test_guild:
-  EXAMPLE_GUILD ::= {
+test-guild:
+  EXAMPLE-GUILD ::= {
     "id": "197038439483310086",
     "name": "Discord Testers",
     "icon": "f64c482b807da4f539cff778d174971c",
@@ -88,50 +88,50 @@ test_guild:
     "public_updates_channel_id": "281283303326089216"
   }
 
-  guild := model.Guild.from_json EXAMPLE_GUILD
-  expect guild.is_available
-  expect_equals "197038439483310086" guild.id
-  expect_equals "Discord Testers" guild.name
-  expect_equals "f64c482b807da4f539cff778d174971c" guild.icon
-  expect_equals "The official place to report Discord Bugs!" guild.description
-  expect_null guild.splash
-  expect_null guild.discovery_splash
-  expect_equals ["ANIMATED_ICON", "VERIFIED", "NEWS", "VANITY_URL", "DISCOVERABLE", "MORE_EMOJI", "INVITE_SPLASH", "BANNER", "COMMUNITY"] guild.features
-  expect_equals [] guild.emojis
-  expect_equals "9b6439a7de04f1d26af92f84ac9e1e4a" guild.banner
-  expect_equals "73193882359173120" guild.owner_id
-  expect_null guild.application_id
-  expect_null guild.region
-  expect_null guild.afk_channel_id
-  expect_equals 300 guild.afk_timeout
-  expect_null guild.system_channel_id
-  expect guild.is_widget_enabled
-  expect_null guild.widget_channel_id
-  expect_equals 3 guild.verification_level
-  expect_equals [] guild.roles
-  expect_equals 1 guild.default_message_notifications
-  expect_equals 1 guild.mfa_level
-  expect_equals 2 guild.explicit_content_filter
-  expect_equals 40000 guild.max_presences
-  expect_equals 250000 guild.max_members
-  expect_equals "discord-testers" guild.vanity_url_code
-  expect_equals 3 guild.premium_tier
-  expect_equals 33 guild.premium_subscription_count
-  expect_equals 0 guild.system_channel_flags_value
-  expect_equals "en-US" guild.preferred_locale
-  expect_equals "441688182833020939" guild.rules_channel_id
-  expect_equals "281283303326089216" guild.public_updates_channel_id
+  guild := model.Guild.from-json EXAMPLE-GUILD
+  expect guild.is-available
+  expect-equals "197038439483310086" guild.id
+  expect-equals "Discord Testers" guild.name
+  expect-equals "f64c482b807da4f539cff778d174971c" guild.icon
+  expect-equals "The official place to report Discord Bugs!" guild.description
+  expect-null guild.splash
+  expect-null guild.discovery-splash
+  expect-equals ["ANIMATED_ICON", "VERIFIED", "NEWS", "VANITY_URL", "DISCOVERABLE", "MORE_EMOJI", "INVITE_SPLASH", "BANNER", "COMMUNITY"] guild.features
+  expect-equals [] guild.emojis
+  expect-equals "9b6439a7de04f1d26af92f84ac9e1e4a" guild.banner
+  expect-equals "73193882359173120" guild.owner-id
+  expect-null guild.application-id
+  expect-null guild.region
+  expect-null guild.afk-channel-id
+  expect-equals 300 guild.afk-timeout
+  expect-null guild.system-channel-id
+  expect guild.is-widget-enabled
+  expect-null guild.widget-channel-id
+  expect-equals 3 guild.verification-level
+  expect-equals [] guild.roles
+  expect-equals 1 guild.default-message-notifications
+  expect-equals 1 guild.mfa-level
+  expect-equals 2 guild.explicit-content-filter
+  expect-equals 40000 guild.max-presences
+  expect-equals 250000 guild.max-members
+  expect-equals "discord-testers" guild.vanity-url-code
+  expect-equals 3 guild.premium-tier
+  expect-equals 33 guild.premium-subscription-count
+  expect-equals 0 guild.system-channel-flags-value
+  expect-equals "en-US" guild.preferred-locale
+  expect-equals "441688182833020939" guild.rules-channel-id
+  expect-equals "281283303326089216" guild.public-updates-channel-id
 
-  UNAVAILABLE_GUILD ::= {
+  UNAVAILABLE-GUILD ::= {
     "id": "41771983423143937",
     "unavailable": true
   }
-  guild = model.Guild.from_json UNAVAILABLE_GUILD
-  expect_not guild.is_available
-  expect_equals "41771983423143937" guild.id
+  guild = model.Guild.from-json UNAVAILABLE-GUILD
+  expect-not guild.is-available
+  expect-equals "41771983423143937" guild.id
 
-test_guild_member:
-  GUILD_MEMBER ::= {
+test-guild-member:
+  GUILD-MEMBER ::= {
     "user": {:},
     "nick": "NOT API SUPPORT",
     "avatar": null,
@@ -140,24 +140,24 @@ test_guild_member:
     "deaf": false,
     "mute": false
   }
-  guild_member := model.GuildMember.from_json GUILD_MEMBER
-  expect_equals "NOT API SUPPORT" guild_member.nick
-  expect_null guild_member.avatar
-  expect_equals [] guild_member.roles
-  expect_equals "2015-04-26T06:26:56.936000+00:00" guild_member.joined_at_value
-  time := guild_member.joined_at
-  expect_equals 2015 time.utc.year
-  expect_equals 4 time.utc.month
-  expect_equals 26 time.utc.day
-  expect_equals 6 time.utc.h
-  expect_equals 26 time.utc.m
-  expect_equals 56 time.utc.s
-  expect_equals 936_000_000 time.utc.ns
-  expect_not guild_member.is_deaf
-  expect_not guild_member.is_mute
+  guild-member := model.GuildMember.from-json GUILD-MEMBER
+  expect-equals "NOT API SUPPORT" guild-member.nick
+  expect-null guild-member.avatar
+  expect-equals [] guild-member.roles
+  expect-equals "2015-04-26T06:26:56.936000+00:00" guild-member.joined-at-value
+  time := guild-member.joined-at
+  expect-equals 2015 time.utc.year
+  expect-equals 4 time.utc.month
+  expect-equals 26 time.utc.day
+  expect-equals 6 time.utc.h
+  expect-equals 26 time.utc.m
+  expect-equals 56 time.utc.s
+  expect-equals 936_000_000 time.utc.ns
+  expect-not guild-member.is-deaf
+  expect-not guild-member.is-mute
 
-test_channel:
-  TEXT_CHANNEL ::= {
+test-channel:
+  TEXT-CHANNEL ::= {
     "id": "41771983423143937",
     "guild_id": "41771983423143937",
     "name": "general",
@@ -171,21 +171,21 @@ test_channel:
     "parent_id": "399942396007890945",
     "default_auto_archive_duration": 60
   }
-  channel := model.Channel.from_json TEXT_CHANNEL
-  expect_equals "41771983423143937" channel.id
-  expect_equals "41771983423143937" channel.guild_id
-  expect_equals "general" channel.name
-  expect_equals model.Channel.TYPE_GUILD_TEXT channel.type
-  expect_equals 6 channel.position
-  expect_equals [] channel.permission_overwrites
-  expect_equals 2 channel.rate_limit_per_user
-  expect channel.is_nsfw
-  expect_equals "24/7 chat about how to gank Mike #2" channel.topic
-  expect_equals "155117677105512449" channel.last_message_id
-  expect_equals "399942396007890945" channel.parent_id
-  expect_equals 60 channel.default_auto_archive_duration
+  channel := model.Channel.from-json TEXT-CHANNEL
+  expect-equals "41771983423143937" channel.id
+  expect-equals "41771983423143937" channel.guild-id
+  expect-equals "general" channel.name
+  expect-equals model.Channel.TYPE-GUILD-TEXT channel.type
+  expect-equals 6 channel.position
+  expect-equals [] channel.permission-overwrites
+  expect-equals 2 channel.rate-limit-per-user
+  expect channel.is-nsfw
+  expect-equals "24/7 chat about how to gank Mike #2" channel.topic
+  expect-equals "155117677105512449" channel.last-message-id
+  expect-equals "399942396007890945" channel.parent-id
+  expect-equals 60 channel.default-auto-archive-duration
 
-  ANNOUNCEMENT_CHANNEL ::= {
+  ANNOUNCEMENT-CHANNEL ::= {
     "id": "41771983423143937",
     "guild_id": "41771983423143937",
     "name": "important-news",
@@ -198,20 +198,20 @@ test_channel:
     "parent_id": "399942396007890945",
     "default_auto_archive_duration": 60
   }
-  channel = model.Channel.from_json ANNOUNCEMENT_CHANNEL
-  expect_equals "41771983423143937" channel.id
-  expect_equals "41771983423143937" channel.guild_id
-  expect_equals "important-news" channel.name
-  expect_equals model.Channel.TYPE_GUILD_ANNOUNCEMENT channel.type
-  expect_equals 6 channel.position
-  expect_equals [] channel.permission_overwrites
-  expect channel.is_nsfw
-  expect_equals "Rumors about Half Life 3" channel.topic
-  expect_equals "155117677105512449" channel.last_message_id
-  expect_equals "399942396007890945" channel.parent_id
-  expect_equals 60 channel.default_auto_archive_duration
+  channel = model.Channel.from-json ANNOUNCEMENT-CHANNEL
+  expect-equals "41771983423143937" channel.id
+  expect-equals "41771983423143937" channel.guild-id
+  expect-equals "important-news" channel.name
+  expect-equals model.Channel.TYPE-GUILD-ANNOUNCEMENT channel.type
+  expect-equals 6 channel.position
+  expect-equals [] channel.permission-overwrites
+  expect channel.is-nsfw
+  expect-equals "Rumors about Half Life 3" channel.topic
+  expect-equals "155117677105512449" channel.last-message-id
+  expect-equals "399942396007890945" channel.parent-id
+  expect-equals 60 channel.default-auto-archive-duration
 
-  VOICE_CHANNEL ::= {
+  VOICE-CHANNEL ::= {
     "id": "155101607195836416",
     "last_message_id": "174629835082649376",
     "type": 2,
@@ -226,22 +226,22 @@ test_channel:
     "rate_limit_per_user": 0,
     "nsfw": false,
   }
-  channel = model.Channel.from_json VOICE_CHANNEL
-  expect_equals "155101607195836416" channel.id
-  expect_equals "174629835082649376" channel.last_message_id
-  expect_equals model.Channel.TYPE_GUILD_VOICE channel.type
-  expect_equals "ROCKET CHEESE" channel.name
-  expect_equals 5 channel.position
-  expect_null channel.parent_id
-  expect_equals 64000 channel.bitrate
-  expect_equals 0 channel.user_limit
-  expect_null channel.rtc_region
-  expect_equals "41771983423143937" channel.guild_id
-  expect_equals [] channel.permission_overwrites
-  expect_equals 0 channel.rate_limit_per_user
-  expect_not channel.is_nsfw
+  channel = model.Channel.from-json VOICE-CHANNEL
+  expect-equals "155101607195836416" channel.id
+  expect-equals "174629835082649376" channel.last-message-id
+  expect-equals model.Channel.TYPE-GUILD-VOICE channel.type
+  expect-equals "ROCKET CHEESE" channel.name
+  expect-equals 5 channel.position
+  expect-null channel.parent-id
+  expect-equals 64000 channel.bitrate
+  expect-equals 0 channel.user-limit
+  expect-null channel.rtc-region
+  expect-equals "41771983423143937" channel.guild-id
+  expect-equals [] channel.permission-overwrites
+  expect-equals 0 channel.rate-limit-per-user
+  expect-not channel.is-nsfw
 
-  DM_CHANNEL ::= {
+  DM-CHANNEL ::= {
     "last_message_id": "3343820033257021450",
     "type": 1,
     "id": "319674150115610528",
@@ -254,19 +254,19 @@ test_channel:
       }
     ]
   }
-  channel = model.Channel.from_json DM_CHANNEL
-  expect_equals "3343820033257021450" channel.last_message_id
-  expect_equals model.Channel.TYPE_DM channel.type
-  expect_equals "319674150115610528" channel.id
-  expect_equals 1 channel.recipients.size
+  channel = model.Channel.from-json DM-CHANNEL
+  expect-equals "3343820033257021450" channel.last-message-id
+  expect-equals model.Channel.TYPE-DM channel.type
+  expect-equals "319674150115610528" channel.id
+  expect-equals 1 channel.recipients.size
   user/model.User := channel.recipients[0]
-  expect_equals "test" user.username
-  expect_equals "9999" user.discriminator
-  expect_equals "82198898841029460" user.id
-  expect_equals "33ecab261d4681afa4d85a04691c4a01" user.avatar
+  expect-equals "test" user.username
+  expect-equals "9999" user.discriminator
+  expect-equals "82198898841029460" user.id
+  expect-equals "33ecab261d4681afa4d85a04691c4a01" user.avatar
 
-test_welcome_screen:
-  WELCOME_SCREEN ::= {
+test-welcome-screen:
+  WELCOME-SCREEN ::= {
     "description": "Discord Developers is a place to learn about Discord's API, bots, and SDKs and integrations. This is NOT a general Discord support server.",
     "welcome_channels": [
       {
@@ -302,31 +302,31 @@ test_welcome_screen:
     ]
   }
 
-  welcome_screen := model.WelcomeScreen.from_json WELCOME_SCREEN
-  expect_equals "Discord Developers is a place to learn about Discord's API, bots, and SDKs and integrations. This is NOT a general Discord support server." welcome_screen.description
-  expect_equals 5 welcome_screen.welcome_channels.size
-  expect_equals "697138785317814292" welcome_screen.welcome_channels[0].channel_id
-  expect_equals "Follow for official Discord API updates" welcome_screen.welcome_channels[0].description
-  expect_null welcome_screen.welcome_channels[0].emoji_id
-  expect_equals "📡" welcome_screen.welcome_channels[0].emoji_name
-  expect_equals "697236247739105340" welcome_screen.welcome_channels[1].channel_id
-  expect_equals "Get help with Bot Verifications" welcome_screen.welcome_channels[1].description
-  expect_null welcome_screen.welcome_channels[1].emoji_id
-  expect_equals "📸" welcome_screen.welcome_channels[1].emoji_name
-  expect_equals "697489244649816084" welcome_screen.welcome_channels[2].channel_id
-  expect_equals "Create amazing things with Discord's API" welcome_screen.welcome_channels[2].description
-  expect_null welcome_screen.welcome_channels[2].emoji_id
-  expect_equals "🔬" welcome_screen.welcome_channels[2].emoji_name
-  expect_equals "613425918748131338" welcome_screen.welcome_channels[3].channel_id
-  expect_equals "Integrate Discord into your game" welcome_screen.welcome_channels[3].description
-  expect_null welcome_screen.welcome_channels[3].emoji_id
-  expect_equals "🎮" welcome_screen.welcome_channels[3].emoji_name
-  expect_equals "646517734150242346" welcome_screen.welcome_channels[4].channel_id
-  expect_equals "Find more places to help you on your quest" welcome_screen.welcome_channels[4].description
-  expect_null welcome_screen.welcome_channels[4].emoji_id
-  expect_equals "🔦" welcome_screen.welcome_channels[4].emoji_name
+  welcome-screen := model.WelcomeScreen.from-json WELCOME-SCREEN
+  expect-equals "Discord Developers is a place to learn about Discord's API, bots, and SDKs and integrations. This is NOT a general Discord support server." welcome-screen.description
+  expect-equals 5 welcome-screen.welcome-channels.size
+  expect-equals "697138785317814292" welcome-screen.welcome-channels[0].channel-id
+  expect-equals "Follow for official Discord API updates" welcome-screen.welcome-channels[0].description
+  expect-null welcome-screen.welcome-channels[0].emoji-id
+  expect-equals "📡" welcome-screen.welcome-channels[0].emoji-name
+  expect-equals "697236247739105340" welcome-screen.welcome-channels[1].channel-id
+  expect-equals "Get help with Bot Verifications" welcome-screen.welcome-channels[1].description
+  expect-null welcome-screen.welcome-channels[1].emoji-id
+  expect-equals "📸" welcome-screen.welcome-channels[1].emoji-name
+  expect-equals "697489244649816084" welcome-screen.welcome-channels[2].channel-id
+  expect-equals "Create amazing things with Discord's API" welcome-screen.welcome-channels[2].description
+  expect-null welcome-screen.welcome-channels[2].emoji-id
+  expect-equals "🔬" welcome-screen.welcome-channels[2].emoji-name
+  expect-equals "613425918748131338" welcome-screen.welcome-channels[3].channel-id
+  expect-equals "Integrate Discord into your game" welcome-screen.welcome-channels[3].description
+  expect-null welcome-screen.welcome-channels[3].emoji-id
+  expect-equals "🎮" welcome-screen.welcome-channels[3].emoji-name
+  expect-equals "646517734150242346" welcome-screen.welcome-channels[4].channel-id
+  expect-equals "Find more places to help you on your quest" welcome-screen.welcome-channels[4].description
+  expect-null welcome-screen.welcome-channels[4].emoji-id
+  expect-equals "🔦" welcome-screen.welcome-channels[4].emoji-name
 
-test_message:
+test-message:
   MESSAGE1 ::= {
     "reactions": [
       {
@@ -358,37 +358,37 @@ test_message:
     "mentions": [],
     "type": 0
   }
-  message := model.Message.from_json MESSAGE1
-  expect_equals "Supa Hot" message.content
-  expect_equals "334385199974967042" message.id
-  expect_equals "290926798999357250" message.channel_id
-  expect_equals model.Message.TYPE_DEFAULT message.type
-  expect_equals "2017-07-11T17:27:07.299000+00:00" message.timestamp_value
+  message := model.Message.from-json MESSAGE1
+  expect-equals "Supa Hot" message.content
+  expect-equals "334385199974967042" message.id
+  expect-equals "290926798999357250" message.channel-id
+  expect-equals model.Message.TYPE-DEFAULT message.type
+  expect-equals "2017-07-11T17:27:07.299000+00:00" message.timestamp-value
   timestamp := message.timestamp
-  expect_equals 2017 timestamp.utc.year
-  expect_equals 7 timestamp.utc.month
-  expect_equals 11 timestamp.utc.day
-  expect_equals 17 timestamp.utc.h
-  expect_equals 27 timestamp.utc.m
-  expect_equals 7 timestamp.utc.s
-  expect_equals 299_000_000 timestamp.utc.ns
-  expect_not message.mentions_everyone
-  expect_not message.is_pinned
-  expect_not message.is_tts
+  expect-equals 2017 timestamp.utc.year
+  expect-equals 7 timestamp.utc.month
+  expect-equals 11 timestamp.utc.day
+  expect-equals 17 timestamp.utc.h
+  expect-equals 27 timestamp.utc.m
+  expect-equals 7 timestamp.utc.s
+  expect-equals 299_000_000 timestamp.utc.ns
+  expect-not message.mentions-everyone
+  expect-not message.is-pinned
+  expect-not message.is-tts
   author := message.author
   expect author is model.User
   user := author as model.User
-  expect_equals "Mason" user.username
-  expect_equals "9999" user.discriminator
-  expect_equals "53908099506183680" user.id
-  expect_equals "a_bab14f271d565501444b2ca3be944b25" user.avatar
-  expect_equals 1 message.reactions.size
+  expect-equals "Mason" user.username
+  expect-equals "9999" user.discriminator
+  expect-equals "53908099506183680" user.id
+  expect-equals "a_bab14f271d565501444b2ca3be944b25" user.avatar
+  expect-equals 1 message.reactions.size
   reaction/model.Reaction := message.reactions[0]
-  expect_equals 1 reaction.count
-  expect_not reaction.me
+  expect-equals 1 reaction.count
+  expect-not reaction.me
   emoji := reaction.emoji
-  expect_equals "🔥" emoji.name
-  expect_null emoji.id
+  expect-equals "🔥" emoji.name
+  expect-null emoji.id
 
   MESSAGE2 ::= {
     "reactions": [
@@ -436,46 +436,46 @@ test_message:
     }
   }
 
-  message = model.Message.from_json MESSAGE2
-  expect_equals "Big news! In this <#278325129692446722> channel!" message.content
-  expect_equals "334385199974967042" message.id
-  expect_equals "290926798999357250" message.channel_id
-  expect_equals model.Message.TYPE_DEFAULT message.type
-  expect_equals "2017-07-11T17:27:07.299000+00:00" message.timestamp_value
+  message = model.Message.from-json MESSAGE2
+  expect-equals "Big news! In this <#278325129692446722> channel!" message.content
+  expect-equals "334385199974967042" message.id
+  expect-equals "290926798999357250" message.channel-id
+  expect-equals model.Message.TYPE-DEFAULT message.type
+  expect-equals "2017-07-11T17:27:07.299000+00:00" message.timestamp-value
   timestamp = message.timestamp
-  expect_equals 2017 timestamp.utc.year
-  expect_equals 7 timestamp.utc.month
-  expect_equals 11 timestamp.utc.day
-  expect_equals 17 timestamp.utc.h
-  expect_equals 27 timestamp.utc.m
-  expect_equals 7 timestamp.utc.s
-  expect_equals 299_000_000 timestamp.utc.ns
-  expect_not message.mentions_everyone
-  expect_not message.is_pinned
-  expect_not message.is_tts
+  expect-equals 2017 timestamp.utc.year
+  expect-equals 7 timestamp.utc.month
+  expect-equals 11 timestamp.utc.day
+  expect-equals 17 timestamp.utc.h
+  expect-equals 27 timestamp.utc.m
+  expect-equals 7 timestamp.utc.s
+  expect-equals 299_000_000 timestamp.utc.ns
+  expect-not message.mentions-everyone
+  expect-not message.is-pinned
+  expect-not message.is-tts
   author = message.author
   expect author is model.User
   user = author as model.User
-  expect_equals "Mason" user.username
-  expect_equals "9999" user.discriminator
-  expect_equals "53908099506183680" user.id
-  expect_equals "a_bab14f271d565501444b2ca3be944b25" user.avatar
-  expect_equals 1 message.reactions.size
+  expect-equals "Mason" user.username
+  expect-equals "9999" user.discriminator
+  expect-equals "53908099506183680" user.id
+  expect-equals "a_bab14f271d565501444b2ca3be944b25" user.avatar
+  expect-equals 1 message.reactions.size
   reaction = message.reactions[0]
-  expect_equals 1 reaction.count
-  expect_not reaction.me
+  expect-equals 1 reaction.count
+  expect-not reaction.me
   emoji = reaction.emoji
-  expect_equals "🔥" emoji.name
-  expect_null emoji.id
-  expect_equals 1 message.mention_channels.size
-  channel/model.ChannelMention := message.mention_channels[0]
-  expect_equals "278325129692446722" channel.id
-  expect_equals "278325129692446720" channel.guild_id
-  expect_equals "big-news" channel.name
-  expect_equals model.Channel.TYPE_GUILD_ANNOUNCEMENT channel.type
+  expect-equals "🔥" emoji.name
+  expect-null emoji.id
+  expect-equals 1 message.mention-channels.size
+  channel/model.ChannelMention := message.mention-channels[0]
+  expect-equals "278325129692446722" channel.id
+  expect-equals "278325129692446720" channel.guild-id
+  expect-equals "big-news" channel.name
+  expect-equals model.Channel.TYPE-GUILD-ANNOUNCEMENT channel.type
 
-test_emoji:
-  EMOJI_PREMIUM ::= {
+test-emoji:
+  EMOJI-PREMIUM ::= {
     "id": "41771983429993937",
     "name": "LUL",
     "roles": ["41771983429993000", "41771983429993111"],
@@ -490,46 +490,46 @@ test_emoji:
     "managed": false,
     "animated": false
   }
-  emoji := model.Emoji.from_json EMOJI_PREMIUM
-  expect_equals "41771983429993937" emoji.id
-  expect_equals "LUL" emoji.name
-  expect_equals 2 emoji.roles.size
-  expect_equals "41771983429993000" emoji.roles[0]
-  expect_equals "41771983429993111" emoji.roles[1]
-  expect_equals 131328 emoji.user.public_flags_value
-  flags := emoji.user.public_flags
+  emoji := model.Emoji.from-json EMOJI-PREMIUM
+  expect-equals "41771983429993937" emoji.id
+  expect-equals "LUL" emoji.name
+  expect-equals 2 emoji.roles.size
+  expect-equals "41771983429993000" emoji.roles[0]
+  expect-equals "41771983429993111" emoji.roles[1]
+  expect-equals 131328 emoji.user.public-flags-value
+  flags := emoji.user.public-flags
   // TODO(florian): test flags.
-  expect emoji.requires_colons
-  expect_not emoji.is_managed
-  expect_not emoji.is_animated
+  expect emoji.requires-colons
+  expect-not emoji.is-managed
+  expect-not emoji.is-animated
 
-  EMOJI_STANDARD ::= {
+  EMOJI-STANDARD ::= {
     "id": null,
     "name": "🔥",
   }
-  emoji = model.Emoji.from_json EMOJI_STANDARD
-  expect_null emoji.id
-  expect_equals "🔥" emoji.name
+  emoji = model.Emoji.from-json EMOJI-STANDARD
+  expect-null emoji.id
+  expect-equals "🔥" emoji.name
 
-  EMOJI_CUSTOM ::= {
+  EMOJI-CUSTOM ::= {
     "id": "41771983429993937",
     "name": "LUL",
     "animated": true
   }
-  emoji = model.Emoji.from_json EMOJI_CUSTOM
-  expect_equals "41771983429993937" emoji.id
-  expect_equals "LUL" emoji.name
-  expect emoji.is_animated
+  emoji = model.Emoji.from-json EMOJI-CUSTOM
+  expect-equals "41771983429993937" emoji.id
+  expect-equals "LUL" emoji.name
+  expect emoji.is-animated
 
-  EMOJI_CUSTOM2 ::= {
+  EMOJI-CUSTOM2 ::= {
     "id": "41771983429993937",
     "name": null
   }
-  emoji = model.Emoji.from_json EMOJI_CUSTOM2
-  expect_equals "41771983429993937" emoji.id
-  expect_null emoji.name
+  emoji = model.Emoji.from-json EMOJI-CUSTOM2
+  expect-equals "41771983429993937" emoji.id
+  expect-null emoji.name
 
-test_application:
+test-application:
   APPLICATION ::= {
     "bot_public": true,
     "bot_require_code_grant": false,
@@ -568,56 +568,56 @@ test_application:
     },
     "verify_key": "1e0a356058d627ca38a5c8c9648818061d49e49bd9da9e3ab17d98ad4d6bg2u8"
   }
-  application := model.Application.from_json APPLICATION
-  expect application.bot_is_public
-  expect_not application.bot_requires_code_grant
-  expect_equals "31deabb7e45b6c8ecfef77d2f99c81a5" application.cover_image
-  expect_equals "Test" application.description
-  expect_equals "290926798626357260" application.guild_id
-  expect_null application.icon
-  expect_equals "172150183260323840" application.id
-  expect_equals "Baba O-Riley" application.name
+  application := model.Application.from-json APPLICATION
+  expect application.bot-is-public
+  expect-not application.bot-requires-code-grant
+  expect-equals "31deabb7e45b6c8ecfef77d2f99c81a5" application.cover-image
+  expect-equals "Test" application.description
+  expect-equals "290926798626357260" application.guild-id
+  expect-null application.icon
+  expect-equals "172150183260323840" application.id
+  expect-equals "Baba O-Riley" application.name
   owner/model.User := application.owner
-  expect_null owner.avatar
-  expect_equals "1738" owner.discriminator
-  expect_equals 1024 owner.flags_value
+  expect-null owner.avatar
+  expect-equals "1738" owner.discriminator
+  expect-equals 1024 owner.flags-value
   flags := owner.flags
   // TODO(florian): test flags.
-  expect_equals "172150183260323840" owner.id
-  expect_equals "i own a bot" owner.username
-  expect_equals "172150183260323840" application.primary_sku_id
-  expect_equals "test" application.slug
+  expect-equals "172150183260323840" owner.id
+  expect-equals "i own a bot" owner.username
+  expect-equals "172150183260323840" application.primary-sku-id
+  expect-equals "test" application.slug
   // Note that "summary" is deprecated and not supported by this library.
   team/model.Team := application.team
-  expect_equals "dd9b7dcfdf5351b9c3de0fe167bacbe1" team.icon
-  expect_equals "531992624043786253" team.id
-  expect_equals 1 team.members.size
+  expect-equals "dd9b7dcfdf5351b9c3de0fe167bacbe1" team.icon
+  expect-equals "531992624043786253" team.id
+  expect-equals 1 team.members.size
   member/model.TeamMember := team.members[0]
-  expect_equals model.TeamMember.MEMBERSHIP_ACCEPTED member.membership_state
-  expect_equals ["*"] member.permissions
-  expect_equals "531992624043786253" member.team_id
-  member_user/model.User := member.user
-  expect_equals "d9e261cd35999608eb7e3de1fae3688b" member_user.avatar
-  expect_equals "0001" member_user.discriminator
-  expect_equals "511972282709709995" member_user.id
-  expect_equals "Mr Owner" member_user.username
-  expect_equals
+  expect-equals model.TeamMember.MEMBERSHIP-ACCEPTED member.membership-state
+  expect-equals ["*"] member.permissions
+  expect-equals "531992624043786253" member.team-id
+  member-user/model.User := member.user
+  expect-equals "d9e261cd35999608eb7e3de1fae3688b" member-user.avatar
+  expect-equals "0001" member-user.discriminator
+  expect-equals "511972282709709995" member-user.id
+  expect-equals "Mr Owner" member-user.username
+  expect-equals
       "1e0a356058d627ca38a5c8c9648818061d49e49bd9da9e3ab17d98ad4d6bg2u8"
-      application.verify_key
+      application.verify-key
 
-test_components:
+test-components:
   COMPONENTS1 ::= [
     {
       "type": 1,
       "components": []
     }
   ]
-  components := COMPONENTS1.map: model.Component.from_json it
-  expect_equals 1 components.size
+  components := COMPONENTS1.map: model.Component.from-json it
+  expect-equals 1 components.size
   component/model.Component := components[0]
   expect component is model.ComponentActionRow
-  action_row_component := component as model.ComponentActionRow
-  expect_equals 0 action_row_component.components.size
+  action-row-component := component as model.ComponentActionRow
+  expect-equals 0 action-row-component.components.size
 
   COMPONENTS2 ::= [
     {
@@ -632,18 +632,18 @@ test_components:
       ]
     }
   ]
-  components = COMPONENTS2.map: model.Component.from_json it
-  expect_equals 1 components.size
+  components = COMPONENTS2.map: model.Component.from-json it
+  expect-equals 1 components.size
   component = components[0]
   expect component is model.ComponentActionRow
-  action_row_component = component as model.ComponentActionRow
-  expect_equals 1 action_row_component.components.size
-  component = action_row_component.components[0]
+  action-row-component = component as model.ComponentActionRow
+  expect-equals 1 action-row-component.components.size
+  component = action-row-component.components[0]
   expect component is model.ComponentButton
   button := component as model.ComponentButton
-  expect_equals "Click me!" button.label
-  expect_equals model.ComponentButton.STYLE_PRIMARY button.style
-  expect_equals "click_one" button.custom_id
+  expect-equals "Click me!" button.label
+  expect-equals model.ComponentButton.STYLE-PRIMARY button.style
+  expect-equals "click_one" button.custom-id
 
   COMPONENTS3 ::= [
     {
@@ -688,43 +688,43 @@ test_components:
       ]
     }
   ]
-  components = COMPONENTS3.map: model.Component.from_json it
-  expect_equals 1 components.size
+  components = COMPONENTS3.map: model.Component.from-json it
+  expect-equals 1 components.size
   component = components[0]
   expect component is model.ComponentActionRow
-  action_row_component = component as model.ComponentActionRow
-  expect_equals 1 action_row_component.components.size
-  component = action_row_component.components[0]
+  action-row-component = component as model.ComponentActionRow
+  expect-equals 1 action-row-component.components.size
+  component = action-row-component.components[0]
   expect component is model.ComponentSelect
-  expect_equals model.Component.TYPE_STRING_SELECT component.type
+  expect-equals model.Component.TYPE-STRING-SELECT component.type
   select := component as model.ComponentSelect
-  expect_equals "class_select_1" select.custom_id
+  expect-equals "class_select_1" select.custom-id
   options := select.options
-  expect_equals 3 options.size
+  expect-equals 3 options.size
   option/model.SelectOption := options[0]
-  expect_equals "Rogue" option.label
-  expect_equals "rogue" option.value
-  expect_equals "Sneak n stab" option.description
+  expect-equals "Rogue" option.label
+  expect-equals "rogue" option.value
+  expect-equals "Sneak n stab" option.description
   emoji := option.emoji
-  expect_equals "rogue" emoji.name
-  expect_equals "625891304148303894" emoji.id
+  expect-equals "rogue" emoji.name
+  expect-equals "625891304148303894" emoji.id
   option = options[1]
-  expect_equals "Mage" option.label
-  expect_equals "mage" option.value
-  expect_equals "Turn 'em into a sheep" option.description
+  expect-equals "Mage" option.label
+  expect-equals "mage" option.value
+  expect-equals "Turn 'em into a sheep" option.description
   emoji = option.emoji
-  expect_equals "mage" emoji.name
-  expect_equals "625891304081063986" emoji.id
+  expect-equals "mage" emoji.name
+  expect-equals "625891304081063986" emoji.id
   option = options[2]
-  expect_equals "Priest" option.label
-  expect_equals "priest" option.value
-  expect_equals "You get heals when I'm done doing damage" option.description
+  expect-equals "Priest" option.label
+  expect-equals "priest" option.value
+  expect-equals "You get heals when I'm done doing damage" option.description
   emoji = option.emoji
-  expect_equals "priest" emoji.name
-  expect_equals "625891303795982337" emoji.id
-  expect_equals "Choose a class" select.placeholder
-  expect_equals 1 select.min_values
-  expect_equals 3 select.max_values
+  expect-equals "priest" emoji.name
+  expect-equals "625891303795982337" emoji.id
+  expect-equals "Choose a class" select.placeholder
+  expect-equals 1 select.min-values
+  expect-equals 3 select.max-values
 
   COMPONENTS4 ::= [
     {
@@ -741,19 +741,19 @@ test_components:
       }]
     }
   ]
-  components = COMPONENTS4.map: model.Component.from_json it
-  expect_equals 1 components.size
+  components = COMPONENTS4.map: model.Component.from-json it
+  expect-equals 1 components.size
   component = components[0]
   expect component is model.ComponentActionRow
-  action_row_component = component as model.ComponentActionRow
-  expect_equals 1 action_row_component.components.size
-  component = action_row_component.components[0]
+  action-row-component = component as model.ComponentActionRow
+  expect-equals 1 action-row-component.components.size
+  component = action-row-component.components[0]
   expect component is model.ComponentTextInput
-  text_input := component as model.ComponentTextInput
-  expect_equals "name" text_input.custom_id
-  expect_equals "Name" text_input.label
-  expect_equals model.ComponentTextInput.STYLE_SHORT text_input.style
-  expect_equals 1 text_input.min_length
-  expect_equals 4000 text_input.max_length
-  expect_equals "John" text_input.placeholder
-  expect text_input.is_required
+  text-input := component as model.ComponentTextInput
+  expect-equals "name" text-input.custom-id
+  expect-equals "Name" text-input.label
+  expect-equals model.ComponentTextInput.STYLE-SHORT text-input.style
+  expect-equals 1 text-input.min-length
+  expect-equals 4000 text-input.max-length
+  expect-equals "John" text-input.placeholder
+  expect text-input.is-required

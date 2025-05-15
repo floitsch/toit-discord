@@ -19,7 +19,7 @@ class Identify:
     the guild member list.
   Value between 50 and 250.
   */
-  large_threshold/int?
+  large-threshold/int?
 
   /**
   Guild sharing information.
@@ -37,21 +37,21 @@ class Identify:
       --.token
       --.properties
       --.compress=null
-      --.large_threshold=null
+      --.large-threshold=null
       --.shard=null
       --.presence=null
       --.intents=0:
 
-  to_json -> Map:
+  to-json -> Map:
     result := {
       "token": token,
-      "properties": properties.to_json,
+      "properties": properties.to-json,
       "intents": intents,
     }
     if compress: result["compress"] = compress
-    if large_threshold: result["large_threshold"] = large_threshold
+    if large-threshold: result["large_threshold"] = large-threshold
     if shard: result["shard"] = shard
-    if presence: result["presence"] = presence.to_json
+    if presence: result["presence"] = presence.to-json
     return result
 
 class Resume:
@@ -59,20 +59,20 @@ class Resume:
   token/string
 
   /** Session id. */
-  session_id/string
+  session-id/string
 
   /** The last sequence number received. */
   seq/int
 
   constructor
       --.token
-      --.session_id
+      --.session-id
       --.seq:
 
-  to_json -> Map:
+  to-json -> Map:
     return {
       "token": token,
-      "session_id": session_id,
+      "session_id": session-id,
       "seq": seq,
     }
 
@@ -91,7 +91,7 @@ class ConnectionProperties:
       --.browser
       --.device:
 
-  to_json -> Map:
+  to-json -> Map:
     return {
       "os": os,
       "browser": browser,
@@ -100,15 +100,15 @@ class ConnectionProperties:
 
 class UpdatePresence:
   /** Online. */
-  static STATUS_ONLINE ::= "online"
+  static STATUS-ONLINE ::= "online"
   /** Do Not Disturb. */
-  static STATUS_DND ::= "dnd"
+  static STATUS-DND ::= "dnd"
   /** AFK. */
-  static STATUS_IDLE ::= "idle"
+  static STATUS-IDLE ::= "idle"
   /** Invisible and shown as offline. */
-  static STATUS_INVISIBLE ::= "invisible"
+  static STATUS-INVISIBLE ::= "invisible"
   /** Offline. */
-  static STATUS_OFFLINE ::= "offline"
+  static STATUS-OFFLINE ::= "offline"
 
   /**
   Time since when the client went idle.
@@ -131,9 +131,9 @@ class UpdatePresence:
       --.afk=false:
     // TODO(florian): implement activities.
 
-  to_json -> Map:
+  to-json -> Map:
     return {
-      "since": since.ms_since_epoch,
+      "since": since.ms-since-epoch,
       "activities": [],
       "status": status,
       "afk": afk,
@@ -143,40 +143,40 @@ abstract class Event:
   /** The event type. */
   type/string
 
-  constructor.from_json type/string data/Map:
+  constructor.from-json type/string data/Map:
     if type == "READY":
-      return EventReady.from_json type data
+      return EventReady.from-json type data
     if type == "CHANNEL_CREATE":
-      return EventChannelCreate.from_json type data
+      return EventChannelCreate.from-json type data
     if type == "CHANNEL_UPDATE":
-      return EventChannelUpdate.from_json type data
+      return EventChannelUpdate.from-json type data
     if type == "CHANNEL_DELETE":
-      return EventChannelDelete.from_json type data
+      return EventChannelDelete.from-json type data
     if type == "THREAD_CREATE":
-      return EventThreadCreate.from_json type data
+      return EventThreadCreate.from-json type data
     if type == "THREAD_UPDATE":
-      return EventThreadUpdate.from_json type data
+      return EventThreadUpdate.from-json type data
     if type == "THREAD_DELETE":
-      return EventThreadDelete.from_json type data
+      return EventThreadDelete.from-json type data
     if type == "EVENT_GUILD_CREATE":
-      return EventGuildCreate.from_json type data
+      return EventGuildCreate.from-json type data
     if type == "MESSAGE_CREATE":
-      return EventMessageCreate.from_json type data
+      return EventMessageCreate.from-json type data
     if type == "MESSAGE_UPDATE":
-      return EventMessageUpdate.from_json type data
+      return EventMessageUpdate.from-json type data
     if type == "MESSAGE_DELETE":
-      return EventMessageDelete.from_json type data
+      return EventMessageDelete.from-json type data
     if type == "MESSAGE_REACTION_ADD":
-      return EventMessageReactionAdd.from_json type data
+      return EventMessageReactionAdd.from-json type data
     if type == "MESSAGE_REACTION_REMOVE":
-      return EventMessageReactionRemove.from_json type data
+      return EventMessageReactionRemove.from-json type data
     if type == "MESSAGE_REACTION_REMOVE_ALL":
-      return EventMessageReactionRemoveAll.from_json type data
+      return EventMessageReactionRemoveAll.from-json type data
     if type == "TYPING_START":
-      return EventTypingStart.from_json type data
+      return EventTypingStart.from-json type data
     if type == "RESUMED":
-      return EventResumed.from_json type data
-    return EventOther.from_json type data
+      return EventResumed.from-json type data
+    return EventOther.from-json type data
 
   constructor .type:
 
@@ -192,7 +192,7 @@ class EventReady extends Event:
 
   /**
   Guilds the user is in.
-  A list of unavailable $Guild objects (see $Guild.is_available).
+  A list of unavailable $Guild objects (see $Guild.is-available).
   */
   guilds/List
 
@@ -200,13 +200,13 @@ class EventReady extends Event:
   The session id.
   Must be provided on future resume attempts.
   */
-  session_id/string
+  session-id/string
 
   /**
   Gateway URL for resuming connections.
   Must be used to get a new gateway url when attempting to resume.
   */
-  resume_gateway_url/string
+  resume-gateway-url/string
 
   /**
   Shard information associated with this session, if sent when identifying.
@@ -220,14 +220,14 @@ class EventReady extends Event:
   */
   application/Application
 
-  constructor.from_json type/string data/Map:
+  constructor.from-json type/string data/Map:
     v = data["v"]
-    user = User.from_json data["user"]
+    user = User.from-json data["user"]
     guilds = data["guilds"]
-    session_id = data["session_id"]
-    resume_gateway_url = data["resume_gateway_url"]
+    session-id = data["session_id"]
+    resume-gateway-url = data["resume_gateway_url"]
     shard = data.get "shard"
-    application = Application.from_json data["application"]
+    application = Application.from-json data["application"]
     super  type
 
 /**
@@ -250,7 +250,7 @@ This message indicates that all queued events have been sent to the
   client, and all further events are new.
 */
 class EventResumed extends Event:
-  constructor.from_json type/string data/Map:
+  constructor.from-json type/string data/Map:
     super type
 
   stringify -> string:
@@ -260,8 +260,8 @@ class EventChannel extends Event:
   /** The channel. */
   channel/Channel
 
-  constructor.from_json type/string data/Map:
-    channel = Channel.from_json data
+  constructor.from-json type/string data/Map:
+    channel = Channel.from-json data
     super type
 
   stringify -> string:
@@ -271,8 +271,8 @@ class EventChannel extends Event:
 A new guild channel was created.
 */
 class EventChannelCreate extends EventChannel:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventChannelCreate: $channel"
@@ -281,8 +281,8 @@ class EventChannelCreate extends EventChannel:
 A channel was updated.
 */
 class EventChannelUpdate extends EventChannel:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventChannelUpdate: $channel"
@@ -291,8 +291,8 @@ class EventChannelUpdate extends EventChannel:
 A channel was deleted.
 */
 class EventChannelDelete extends EventChannel:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventChannelDelete: $channel"
@@ -301,32 +301,32 @@ class EventThread extends Event:
   /** The thread. */
   channel/Channel
 
-  constructor.from_json type/string data/Map:
-    channel = Channel.from_json data
+  constructor.from-json type/string data/Map:
+    channel = Channel.from-json data
     super type
 
 /**
 A new thread was created.
 
-When a thread is created, the $Channel.is_newly_created flag is set to true.
+When a thread is created, the $Channel.is-newly-created flag is set to true.
 When being added to an existing private thread, then the $Channel.member field
   is not null.
 */
 class EventThreadCreate extends EventThread:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventThreadCreate: $channel"
 
 /**
 A thread was updated.
-This event is not sent for $Channel.last_message_id changes. To keep track of
+This event is not sent for $Channel.last-message-id changes. To keep track of
   the last message in a thread, listen for $EventMessageCreate events.
 */
 class EventThreadUpdate extends EventThread:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventThreadUpdate: $channel"
@@ -337,8 +337,8 @@ A thread was deleted.
 Only a few of the $channel fields are set.
 */
 class EventThreadDelete extends EventThread:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventThreadDelete: $channel"
@@ -353,8 +353,8 @@ class EventGuildCreate extends Event:
   /** The guild. */
   guild/Guild
 
-  constructor.from_json type/string data/Map:
-    guild = Guild.from_json data
+  constructor.from-json type/string data/Map:
+    guild = Guild.from-json data
     super type
 
   stringify -> string:
@@ -364,8 +364,8 @@ class EventMessage extends Event:
   /** The message. */
   message/Message
 
-  constructor.from_json type/string data/Map:
-    message = Message.from_json data
+  constructor.from-json type/string data/Map:
+    message = Message.from-json data
     super type
 
   stringify -> string:
@@ -375,8 +375,8 @@ class EventMessage extends Event:
 A message was created.
 */
 class EventMessageCreate extends EventMessage:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventMessageCreate: $message"
@@ -385,8 +385,8 @@ class EventMessageCreate extends EventMessage:
 A message was edited.
 */
 class EventMessageUpdate extends EventMessage:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventMessageUpdate: $message"
@@ -395,8 +395,8 @@ class EventMessageUpdate extends EventMessage:
 A message was deleted.
 */
 class EventMessageDelete extends EventMessage:
-  constructor.from_json type/string data/Map:
-    super.from_json type data
+  constructor.from-json type/string data/Map:
+    super.from-json type data
 
   stringify -> string:
     return "EventMessageDelete: $message"
@@ -409,7 +409,7 @@ class EventOther extends Event:
   /** The raw data. */
   data/Map
 
-  constructor.from_json type/string .data/Map:
+  constructor.from-json type/string .data/Map:
     super type
 
 class EventMessageReaction extends Event:
@@ -421,16 +421,16 @@ A reaction was added to a message.
 */
 class EventMessageReactionAdd extends EventMessageReaction:
   /** The user id. */
-  user_id/string
+  user-id/string
 
   /** The channel id. */
-  channel_id/string
+  channel-id/string
 
   /** The message id. */
-  message_id/string
+  message-id/string
 
   /** The guild id. */
-  guild_id/string?
+  guild-id/string?
 
   /**
   Member who reacted.
@@ -441,47 +441,47 @@ class EventMessageReactionAdd extends EventMessageReaction:
   /** The emoji. */
   emoji/Emoji
 
-  constructor.from_json type/string data/Map:
-    user_id = data["user_id"]
-    channel_id = data["channel_id"]
-    message_id = data["message_id"]
-    guild_id = data.get "guild_id"
-    member_entry := data.get "member"
-    if member_entry != null:
-      member = GuildMember.from_json member_entry
+  constructor.from-json type/string data/Map:
+    user-id = data["user_id"]
+    channel-id = data["channel_id"]
+    message-id = data["message_id"]
+    guild-id = data.get "guild_id"
+    member-entry := data.get "member"
+    if member-entry != null:
+      member = GuildMember.from-json member-entry
     else:
       member = null
-    emoji = Emoji.from_json data["emoji"]
+    emoji = Emoji.from-json data["emoji"]
     super type
 
   stringify -> string:
-    return "EventMessageReactionAdd: $user_id reacted with $emoji to $channel_id/$message_id"
+    return "EventMessageReactionAdd: $user-id reacted with $emoji to $channel-id/$message-id"
 
 /**
 A reaction was removed from a message.
 */
 class EventMessageReactionRemove extends EventMessageReaction:
   /** The user id. */
-  user_id/string
+  user-id/string
 
   /** The channel id. */
-  channel_id/string
+  channel-id/string
 
   /** The message id. */
-  message_id/string
+  message-id/string
 
   /** The guild id. */
-  guild_id/string?
+  guild-id/string?
 
   /** The emoji. */
   emoji/Emoji
 
-  constructor.from_json type/string data/Map:
-    user_id = data["user_id"]
-    channel_id = data["channel_id"]
-    message_id = data["message_id"]
-    guild_id = data.get "guild_id"
-    emoji = Emoji.from_json data["emoji"]
+  constructor.from-json type/string data/Map:
+    user-id = data["user_id"]
+    channel-id = data["channel_id"]
+    message-id = data["message_id"]
+    guild-id = data.get "guild_id"
+    emoji = Emoji.from-json data["emoji"]
     super type
 
 /**
@@ -489,18 +489,18 @@ All reactions from a message were removed.
 */
 class EventMessageReactionRemoveAll extends EventMessageReaction:
   /** The channel id. */
-  channel_id/string
+  channel-id/string
 
   /** The message id. */
-  message_id/string
+  message-id/string
 
   /** The guild id. */
-  guild_id/string?
+  guild-id/string?
 
-  constructor.from_json type/string data/Map:
-    channel_id = data["channel_id"]
-    message_id = data["message_id"]
-    guild_id = data.get "guild_id"
+  constructor.from-json type/string data/Map:
+    channel-id = data["channel_id"]
+    message-id = data["message_id"]
+    guild-id = data.get "guild_id"
     super type
 
 /**
@@ -508,26 +508,26 @@ A user started typing in a channel.
 */
 class EventTypingStart extends Event:
   /** The user id. */
-  user_id/string
+  user-id/string
 
   /** The channel id. */
-  channel_id/string
+  channel-id/string
 
   /** The timestamp. */
-  timestamp_value/int
+  timestamp-value/int
 
   /** The guild id. */
-  guild_id/string?
+  guild-id/string?
 
-  constructor.from_json type/string data/Map:
-    user_id = data["user_id"]
-    channel_id = data["channel_id"]
-    timestamp_value = data["timestamp"]
-    guild_id = data.get "guild_id"
+  constructor.from-json type/string data/Map:
+    user-id = data["user_id"]
+    channel-id = data["channel_id"]
+    timestamp-value = data["timestamp"]
+    guild-id = data.get "guild_id"
     super type
 
   timestamp -> Time:
-    return Time.epoch --s=timestamp_value
+    return Time.epoch --s=timestamp-value
 
   stringify -> string:
-    return "EventTypingStart: $user_id started typing in $channel_id"
+    return "EventTypingStart: $user-id started typing in $channel-id"
