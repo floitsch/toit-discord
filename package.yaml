@@ -1,5 +1,9 @@
 name: discord
 description: Discord bot API.
+
+environment:
+  sdk: ^2.0.0-alpha.189
+
 dependencies:
   certificate_roots:
     url: github.com/toitware/toit-cert-roots

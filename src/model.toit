@@ -2618,7 +2618,7 @@ parse-iso8601_ str/string? -> Time:
     str = str.trim --right "Z"
     str = str.trim --right "+00:00"
     parts ::= str.split "T"
-    str-to-int ::= :int.parse it --on-error=: throw "Cannot parse $it as integer"
+    str-to-int ::= :int.parse it --if-error=: throw "Cannot parse $it as integer"
     if parts.size != 2: throw "Expected T to separate date and time"
     date-parts ::= (parts[0].split "-").map str-to-int
     if date-parts.size != 3: throw "Expected 3 segments separated by - for date"
